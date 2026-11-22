@@ -129,8 +129,8 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
 .acts button.go{background:var(--terra);color:#fff;width:68px;height:68px;margin-top:-4px}
 .acts svg{width:26px;height:26px}
 .daily{display:flex;justify-content:space-between;align-items:center;padding:0 20px 6px;font-size:13px;color:var(--muted)}
-.meter{display:flex;gap:4px}
-.meter i{width:22px;height:5px;border-radius:3px;background:var(--sage-l)}
+.meter{display:flex;gap:3px;width:140px}
+.meter i{flex:1;min-width:0;height:5px;border-radius:3px;background:var(--sage-l)}
 .meter i.on{background:var(--forest)}
 .done{margin:20px;padding:30px 22px;text-align:center;border-radius:24px;background:var(--forest);color:var(--cream)}
 .done h2{font-family:var(--f-serif);font-style:italic;font-weight:500;font-size:34px;line-height:1.05;margin:14px 0 8px}
@@ -357,14 +357,14 @@ const PEOPLE=[
  {id:'alessandro',ord:1,n:'Alessandro',age:20,g:'m',area:'Greater Montréal',job:'King of the Hill',acts:['Hiking','Trail running','Photography','Strava'],spots:['Mont-Royal','Mont Saint-Hilaire'],s:{h:61,km:780,up:24},q:'If there is a hill in Montréal, I have already been to the top of it. Twice.',d:'Alessandro chases summits, not swipes. He wants someone who will race him up Mont-Royal and then sit still with him for the view.',likes:1,pal:0,first:1},
  {id:'jacob',ord:2,n:'Jacob',age:20,g:'m',area:'Greater Montréal',job:'The Nature Talker',acts:['Hiking','Photography','Kayaking','Strava'],spots:['Mont Orford','Mont Saint-Bruno'],s:{h:44,km:530,up:17},q:'Ask me about any plant on the trail. Seriously, ask.',d:'Jacob cannot walk past a waterfall, a fern or a strange mushroom without telling you about it. He is happiest on a long trail with someone who asks questions back.',likes:1,pal:5,first:1},
  {id:'antoine',ord:4,n:'Antoine',age:20,g:'m',area:'Greater Montréal',job:'The Explorer',acts:['Hiking','Skiing','Camping','Mountain biking'],spots:['Mont-Tremblant','Mont Orford'],s:{h:47,km:612,up:18.4},q:'Any excuse to be outside. Next stop: Tremblant.',d:'Antoine will take any excuse to be outside. He loves the big views of Mont-Tremblant and is always planning the next trip.',likes:1,pal:1,first:1},
- {id:'camille',n:'Camille',age:29,g:'w',area:'Rosemont',job:'Nurse · Sunrise chaser',acts:['Hiking','Camping','Climbing','Photography'],spots:['Mont Saint-Bruno','Mont Saint-Hilaire','Parc d\'Oka'],s:{h:52,km:640,up:21},q:'I\'d rather meet someone at the top of a mountain than at the bottom of a pint.',likes:1,pal:0},
- {id:'lea',n:'Léa',age:27,g:'w',area:'Plateau',job:'Designer · Trail runner',acts:['Trail running','Hiking','Yoga','Local food'],spots:['Mont-Royal','Mont Saint-Bruno','Mont Orford'],s:{h:38,km:512,up:16},q:'Fast on the downhills, slow on the snack breaks.',likes:1,pal:1},
- {id:'sarah',n:'Sarah-Jade',age:31,g:'w',area:'Verdun',job:'Teacher · Weekend camper',acts:['Camping','Hiking','Kayaking','Photography'],spots:['Parc d\'Oka','Mont Orford','Mont-Tremblant'],s:{h:29,km:388,up:12},q:'Tent packed. Looking for a co-pilot for Tremblant.',likes:0,pal:2},
- {id:'isa',n:'Isabelle',age:39,g:'w',area:'Brossard',job:'Manager · Back on the trail',acts:['Hiking','Yoga','Local food','Snowshoeing'],spots:['Mont Saint-Hilaire','Mont Saint-Bruno','Mont-Royal'],s:{h:24,km:301,up:7},q:'Free weekends are precious. I\'d rather spend one outside.',likes:1,pal:3},
- {id:'emilie',n:'Émilie',age:33,g:'w',area:'Villeray',job:'Physio · Climber',acts:['Climbing','Hiking','Skiing','Strava'],spots:['Mont Orford','Mont-Tremblant','Mont Saint-Hilaire'],s:{h:41,km:455,up:19},q:'Show me your Strava, I\'ll show you my route.',likes:0,pal:4},
- {id:'ma',n:'Marc-Antoine',age:30,g:'m',area:'Griffintown',job:'Engineer · Mountain biker',acts:['Mountain biking','Hiking','Camping','Kayaking'],spots:['Mont Saint-Bruno','Parc d\'Oka','Mont Orford'],s:{h:33,km:590,up:17},q:'Two wheels down, two boots up.',likes:1,pal:5},
- {id:'sam',n:'Samuel',age:34,g:'m',area:'Hochelaga',job:'Chef · Trail snack expert',acts:['Hiking','Local food','Camping','Photography'],spots:['Mont-Royal','Mont Saint-Hilaire','Parc d\'Oka'],s:{h:27,km:340,up:10},q:'I pack the picnic. You pick the summit.',likes:0,pal:2},
- {id:'jul',n:'Julien',age:36,g:'m',area:'Longueuil',job:'Photographer · Early riser',acts:['Photography','Hiking','Skiing','Snowshoeing'],spots:['Mont Saint-Bruno','Mont-Tremblant','Mont Saint-Hilaire'],s:{h:46,km:520,up:20},q:'Golden hour is a lifestyle.',likes:1,pal:1}];
+ {id:'camille',ord:6,n:'Camille',age:29,g:'w',area:'Rosemont',job:'Nurse · Sunrise chaser',acts:['Hiking','Camping','Climbing','Photography'],spots:['Mont Saint-Bruno','Mont Saint-Hilaire','Parc d\'Oka'],s:{h:52,km:640,up:21},q:'I\'d rather meet someone at the top of a mountain than at the bottom of a pint.',likes:1,pal:0},
+ {id:'lea',ord:7,n:'Léa',age:27,g:'w',area:'Plateau',job:'Designer · Trail runner',acts:['Trail running','Hiking','Yoga','Local food'],spots:['Mont-Royal','Mont Saint-Bruno','Mont Orford'],s:{h:38,km:512,up:16},q:'Fast on the downhills, slow on the snack breaks.',likes:1,pal:1},
+ {id:'sarah',ord:8,n:'Sarah-Jade',age:31,g:'w',area:'Verdun',job:'Teacher · Weekend camper',acts:['Camping','Hiking','Kayaking','Photography'],spots:['Parc d\'Oka','Mont Orford','Mont-Tremblant'],s:{h:29,km:388,up:12},q:'Tent packed. Looking for a co-pilot for Tremblant.',likes:0,pal:2},
+ {id:'isa',ord:9,n:'Isabelle',age:39,g:'w',area:'Brossard',job:'Manager · Back on the trail',acts:['Hiking','Yoga','Local food','Snowshoeing'],spots:['Mont Saint-Hilaire','Mont Saint-Bruno','Mont-Royal'],s:{h:24,km:301,up:7},q:'Free weekends are precious. I\'d rather spend one outside.',likes:1,pal:3},
+ {id:'emilie',ord:10,n:'Émilie',age:33,g:'w',area:'Villeray',job:'Physio · Climber',acts:['Climbing','Hiking','Skiing','Strava'],spots:['Mont Orford','Mont-Tremblant','Mont Saint-Hilaire'],s:{h:41,km:455,up:19},q:'Show me your Strava, I\'ll show you my route.',likes:0,pal:4},
+ {id:'ma',ord:11,n:'Marc-Antoine',age:30,g:'m',area:'Griffintown',job:'Engineer · Mountain biker',acts:['Mountain biking','Hiking','Camping','Kayaking'],spots:['Mont Saint-Bruno','Parc d\'Oka','Mont Orford'],s:{h:33,km:590,up:17},q:'Two wheels down, two boots up.',likes:1,pal:5},
+ {id:'sam',ord:12,n:'Samuel',age:34,g:'m',area:'Hochelaga',job:'Chef · Trail snack expert',acts:['Hiking','Local food','Camping','Photography'],spots:['Mont-Royal','Mont Saint-Hilaire','Parc d\'Oka'],s:{h:27,km:340,up:10},q:'I pack the picnic. You pick the summit.',likes:0,pal:2},
+ {id:'jul',ord:13,n:'Julien',age:36,g:'m',area:'Longueuil',job:'Photographer · Early riser',acts:['Photography','Hiking','Skiing','Snowshoeing'],spots:['Mont Saint-Bruno','Mont-Tremblant','Mont Saint-Hilaire'],s:{h:46,km:520,up:20},q:'Golden hour is a lifestyle.',likes:1,pal:1}];
 const HIKES=[
  {id:'h1',t:'Launch hike with our creators',d:'Sat May 22',mo:'MAY',day:22,time:'9:00',spot:'Mont Saint-Bruno',cap:30,left:11,tag:'Long weekend',diff:'Easy',km:9.5,pal:1,meet:'Park visitor centre',big:1},
  {id:'h2',t:'Golden hour on the mountain',d:'Sat Jun 5',mo:'JUN',day:5,time:'18:00',spot:'Mont-Royal',cap:15,left:6,diff:'Easy',km:7.2,pal:5,meet:'Beaver Lake pavilion'},
@@ -377,14 +377,14 @@ const HIKES=[
 const KEY='kinova_demo_v1';
 const base=()=>({step:'home',ob:0,name:'',age:'',interest:'all',acts:['Hiking','Mountain biking','Camping'],spots:['Mont Saint-Bruno','Mont Orford'],strava:false,level:'Intermediate',persona:null,stats:{h:47,km:612,up:18.4},plus:false,tab:'discover',idx:0,liked:[],passed:[],matches:{},unread:{},reg:[],notify:false,filter:'all',guide:null,doneSurvey:[]});
 let S=base();
-try{const r=localStorage.getItem(KEY);if(r){S=Object.assign(base(),JSON.parse(r));}}catch(e){}
+try{localStorage.removeItem(KEY)}catch(e){}
 const RESUME=S.step==='app';S.step='home';
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const save=()=>{};
 let U={sheet:null,chat:null,toast:null,match:null,survey:null,busy:false};
 const me=()=>({n:S.name||'You'});
 function compat(p){const a=p.acts.filter(x=>S.acts.includes(x)).length,s=p.spots.filter(x=>S.spots.includes(x)).length;return Math.min(98,62+a*7+s*9)}
 const shared=p=>({acts:p.acts.filter(x=>S.acts.includes(x)),spots:p.spots.filter(x=>S.spots.includes(x))});
-function queue(){let l=PEOPLE.filter(p=>S.interest==='all'||p.g===S.interest);l=l.sort((a,b)=>((a.ord||99)-(b.ord||99))||(b.likes-a.likes)||(compat(b)-compat(a))).slice(0,6);return l}
+function queue(){let l=PEOPLE.filter(p=>S.interest==='all'||p.g===S.interest);l=l.sort((a,b)=>((a.ord||99)-(b.ord||99))||(b.likes-a.likes)||(compat(b)-compat(a)));return l}
 function toast(t){U.toast=t;render();clearTimeout(toast.t);toast.t=setTimeout(()=>{U.toast=null;render()},2200)}
 
 /* ---------- views ---------- */
@@ -438,7 +438,7 @@ function card(p,back){const sh=shared(p);return `<div class="pcard ${back?'back'
 
 function vDiscover(){const q=queue();const left=q.slice(S.idx);
  const bar=`<div class="daily"><span>Today's picks · ${Math.min(S.idx+1,q.length)} of ${q.length}</span><div class="meter">${q.map((_,i)=>`<i class="${i<S.idx?'on':''}"></i>`).join('')}</div></div>`;
- if(!left.length)return hdr()+`<div class="done fade">${heart(70)}<h2>That's it for today.<br>Now go hike.</h2><p>Kinova gives you a few well-matched people a day instead of endless swiping. Meet them outdoors.</p><button class="btn cream" data-a="tab" data-v="hikes">See group hikes</button><button class="btn" style="background:transparent;color:var(--sage-l);margin-top:6px" data-a="replay">Replay today's picks</button></div>`;
+ if(!left.length)return hdr()+`<div class="done fade">${heart(70)}<h2>That's it for today.<br>Now go hike.</h2><p>Kinova shows you people who share your trails, not an endless feed. Meet them outdoors.</p><button class="btn cream" data-a="tab" data-v="hikes">See group hikes</button><button class="btn" style="background:transparent;color:var(--sage-l);margin-top:6px" data-a="replay">Replay today's picks</button></div>`;
  return hdr()+bar+`<div class="deck">${left[1]?card(left[1],true):''}${card(left[0])}</div>
  <div class="acts"><button data-a="pass" aria-label="Pass">${ic('x')}</button><button class="go" data-a="like" aria-label="Like">${ic('heart').replace('class="i"','class="i" style="fill:#fff"')}</button><button data-a="profile" data-v="${left[0].id}" aria-label="Profile">${ic('info')}</button></div><div class="note">Drag the card or tap a button. AI-generated photos, not real people.</div>`}
 
