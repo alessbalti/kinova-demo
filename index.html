@@ -99,7 +99,8 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
 .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:var(--muted);padding:6px 0;position:relative}
 .tabbar button.on{color:var(--forest)}
 .tabbar button.on svg{stroke-width:2.4}
-.tabbar .guide{color:#fff}
+.tabbar .guide{color:var(--muted)}.tabbar .guide.on{color:var(--terra)}
+@media (max-width:759px){.deck{height:min(540px,calc(100dvh - 330px))}}
 .tabbar .guide span.o{width:46px;height:46px;border-radius:50%;background:var(--forest);display:grid;place-items:center;margin-top:-22px;border:4px solid var(--card);color:var(--cream)}
 .tabbar .guide.on span.o{background:var(--terra)}
 .badge{position:absolute;top:2px;right:calc(50% - 20px);background:var(--terra);color:#fff;border-radius:99px;font-size:10px;min-width:16px;height:16px;display:grid;place-items:center;padding:0 4px}
@@ -253,7 +254,7 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
     <h2>Swipe less. Hike more.</h2>
     <p>Interactive prototype of Kinova. Scan the code to open it on your phone and try every feature.</p>
     <div id="qr"></div>
-    <small>Profiles shown are illustrated placeholders, not real people.</small>
+    <small>Photos are AI-generated. Profiles are not real people.</small>
   </div>
   <div class="phone" id="phone"><div class="app" id="app"></div></div>
 </div>
@@ -382,7 +383,7 @@ function vDiscover(){const q=queue();const left=q.slice(S.idx);
  const bar=`<div class="daily"><span>Today's picks · ${Math.min(S.idx+1,q.length)} of ${q.length}</span><div class="meter">${q.map((_,i)=>`<i class="${i<S.idx?'on':''}"></i>`).join('')}</div></div>`;
  if(!left.length)return hdr()+`<div class="done fade">${heart(70)}<h2>That's it for today.<br>Now go hike.</h2><p>Kinova gives you a few well-matched people a day instead of endless swiping. Meet them outdoors.</p><button class="btn cream" data-a="tab" data-v="hikes">See group hikes</button><button class="btn" style="background:transparent;color:var(--sage-l);margin-top:6px" data-a="replay">Replay today's picks</button></div>`;
  return hdr()+bar+`<div class="deck">${left[1]?card(left[1],true):''}${card(left[0])}</div>
- <div class="acts"><button data-a="pass" aria-label="Pass">${ic('x')}</button><button class="go" data-a="like" aria-label="Like">${ic('heart').replace('class="i"','class="i" style="fill:#fff"')}</button><button data-a="profile" data-v="${left[0].id}" aria-label="Profile">${ic('info')}</button></div><div class="note">Drag the card or tap a button. Illustrated placeholders, not real people.</div>`}
+ <div class="acts"><button data-a="pass" aria-label="Pass">${ic('x')}</button><button class="go" data-a="like" aria-label="Like">${ic('heart').replace('class="i"','class="i" style="fill:#fff"')}</button><button data-a="profile" data-v="${left[0].id}" aria-label="Profile">${ic('info')}</button></div><div class="note">Drag the card or tap a button. AI-generated photos, not real people.</div>`}
 
 function vHikes(){const f=S.filter;let list=HIKES.filter(h=>f==='all'||(f==='mine'&&S.reg.includes(h.id))||(f==='jul'&&h.mo==='JUL'));
  const mine=S.reg.length;
