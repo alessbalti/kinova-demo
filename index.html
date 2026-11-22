@@ -545,7 +545,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!
 function fit(){const p=$('#phone');if(window.innerWidth<760){p.style.transform='';return}const s=Math.min(1,(window.innerHeight-48)/844);p.style.transform=`scale(${s})`}
 addEventListener('resize',fit);fit();
 $('#pl').innerHTML=wordmark(34);
-try{new QRCode($('#qr'),{text:'https://claude.ai/artifact/9j2HbS9h3P32NBv5yXxBWQ',width:150,height:150,colorDark:'#1e2b24',colorLight:'#e8e2d2'})}catch(e){$('#qr').parentNode.style.display='none'}
+try{new QRCode($('#qr'),{text:'https://alessbalti.github.io/kinova-demo/',width:150,height:150,colorDark:'#1e2b24',colorLight:'#e8e2d2'})}catch(e){$('#qr').parentNode.style.display='none'}
 render();
 if(S.step==='splash')setTimeout(()=>{if(S.step==='splash'){S.step='welcome';render()}},1700);
 </script>
