@@ -314,6 +314,10 @@ function spotImg(n){const k=SPOTKEY[n];return k&&PHOTOS[k]?`<img src="${PHOTOS[k
 function imgTag(id,cls){return PHOTOS[id]?`<img ${cls?'class="'+cls+'" ':''}src="${PHOTOS[id]}" alt="">`:''}
 const spotBy=n=>SPOTS.find(s=>s.n===n);
 const PEOPLE=[
+ {id:'coralie',n:'Coralie',age:20,g:'w',area:'Greater Montréal',job:'The Veteran',acts:['Hiking','Snowshoeing','Camping','Strava'],spots:['Mont Saint-Bruno','Mont-Royal'],s:{h:100,km:1250,up:38},q:'100 hikes in and the trail still surprises me.',d:'Coralie has done more hikes than most people have taken weekends off. She knows Mont Saint-Bruno by heart, hikes through snow without complaining, and is looking for someone who can keep up and still enjoy the quiet.',likes:1,pal:3,first:1},
+ {id:'alessandro',n:'Alessandro',age:20,g:'m',area:'Greater Montréal',job:'King of the Hill',acts:['Hiking','Trail running','Photography','Strava'],spots:['Mont-Royal','Mont Saint-Hilaire'],s:{h:61,km:780,up:24},q:'If there is a hill in Montréal, I have already been to the top of it. Twice.',d:'Alessandro chases summits, not swipes. He wants someone who will race him up Mont-Royal and then sit still with him for the view.',likes:1,pal:0,first:1},
+ {id:'jacob',n:'Jacob',age:20,g:'m',area:'Greater Montréal',job:'The Nature Talker',acts:['Hiking','Photography','Kayaking','Strava'],spots:['Mont Orford','Mont Saint-Bruno'],s:{h:44,km:530,up:17},q:'Ask me about any plant on the trail. Seriously, ask.',d:'Jacob cannot walk past a waterfall, a fern or a strange mushroom without telling you about it. He is happiest on a long trail with someone who asks questions back.',likes:1,pal:5,first:1},
+ {id:'antoine',n:'Antoine',age:20,g:'m',area:'Greater Montréal',job:'The Explorer',acts:['Hiking','Skiing','Camping','Mountain biking'],spots:['Mont-Tremblant','Mont Orford'],s:{h:47,km:612,up:18.4},q:'Any excuse to be outside. Next stop: Tremblant.',d:'Antoine will take any excuse to be outside. He loves the big views of Mont-Tremblant and is always planning the next trip.',likes:1,pal:1,first:1},
  {id:'camille',n:'Camille',age:29,g:'w',area:'Rosemont',job:'Nurse · Sunrise chaser',acts:['Hiking','Camping','Climbing','Photography'],spots:['Mont Saint-Bruno','Mont Saint-Hilaire','Parc d\'Oka'],s:{h:52,km:640,up:21},q:'I\'d rather meet someone at the top of a mountain than at the bottom of a pint.',likes:1,pal:0},
  {id:'lea',n:'Léa',age:27,g:'w',area:'Plateau',job:'Designer · Trail runner',acts:['Trail running','Hiking','Yoga','Local food'],spots:['Mont-Royal','Mont Saint-Bruno','Mont Orford'],s:{h:38,km:512,up:16},q:'Fast on the downhills, slow on the snack breaks.',likes:1,pal:1},
  {id:'sarah',n:'Sarah-Jade',age:31,g:'w',area:'Verdun',job:'Teacher · Weekend camper',acts:['Camping','Hiking','Kayaking','Photography'],spots:['Parc d\'Oka','Mont Orford','Mont-Tremblant'],s:{h:29,km:388,up:12},q:'Tent packed. Looking for a co-pilot for Tremblant.',likes:0,pal:2},
@@ -334,20 +338,20 @@ const HIKES=[
 const KEY='kinova_demo_v1';
 const base=()=>({step:'splash',ob:0,name:'',age:'',interest:'all',acts:['Hiking','Mountain biking','Camping'],spots:['Mont Saint-Bruno','Mont Orford'],strava:false,persona:null,stats:{h:47,km:612,up:18.4},plus:false,tab:'discover',idx:0,liked:[],passed:[],matches:{},unread:{},reg:[],notify:false,filter:'all',guide:null,doneSurvey:[]});
 let S=base();
-try{const r=localStorage.getItem(KEY);if(r){S=Object.assign(base(),JSON.parse(r));if(S.step==='splash')S.step='welcome'}}catch(e){}
+try{const r=localStorage.getItem(KEY);if(r){S=Object.assign(base(),JSON.parse(r));if(S.step==='splash'||S.step==='persona')S.step='welcome'}}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 let U={sheet:null,chat:null,toast:null,match:null,survey:null,busy:false};
 const me=()=>({n:S.name||'You'});
 function compat(p){const a=p.acts.filter(x=>S.acts.includes(x)).length,s=p.spots.filter(x=>S.spots.includes(x)).length;return Math.min(98,62+a*7+s*9)}
 const shared=p=>({acts:p.acts.filter(x=>S.acts.includes(x)),spots:p.spots.filter(x=>S.spots.includes(x))});
-function queue(){let l=PEOPLE.filter(p=>S.interest==='all'||p.g===S.interest);l=l.sort((a,b)=>(b.likes-a.likes)||(compat(b)-compat(a))).slice(0,6);return l}
+function queue(){let l=PEOPLE.filter(p=>S.interest==='all'||p.g===S.interest);l=l.sort((a,b)=>((b.first||0)-(a.first||0))||(b.likes-a.likes)||(compat(b)-compat(a))).slice(0,6);return l}
 function toast(t){U.toast=t;render();clearTimeout(toast.t);toast.t=setTimeout(()=>{U.toast=null;render()},2200)}
 
 /* ---------- views ---------- */
 function vSplash(){return `<div class="dark welcome" style="justify-content:center;gap:20px"><div class="pulse">${heart(110)}</div>${wordmark(30)}</div>`}
 function vWelcome(){return `<div class="dark welcome"><div></div><div class="fade">${wordmark(40)}<div class="tag">kin (your people) + nova (new)</div><p style="color:var(--cream);font-size:19px;margin:24px 0 0">New people, found on the trail.</p></div>
 <div class="fade"><div style="display:flex;justify-content:center;gap:8px;margin-bottom:18px;color:var(--sage-l);font-size:13px"><span>Match outdoors</span>·<span>Meet outdoors</span></div>
-<button class="btn cream" data-a="start">Get started</button><button class="btn" style="background:transparent;color:var(--sage-l);margin-top:6px;font-size:14px" data-a="own">Create my own profile</button></div></div>`}
+<button class="btn cream" data-a="start">Get started</button><button class="btn" style="background:transparent;color:var(--sage-l);margin-top:6px;font-size:14px" data-a="skip">Skip setup, explore the demo</button></div></div>`}
 function vPersona(){return `<div class="pad fade" style="padding-top:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><button class="iconbtn" data-a="tobwelcome" aria-label="Back">${ic('back')}</button><span class="eyebrow">Demo</span></div>
 <h1 class="h1" style="margin-bottom:6px">Who are you today?</h1><p class="muted" style="margin:0 0 18px">Pick a person and explore Kinova as them.</p>
 <div class="pgrid">${PERSONAS.map(p=>`<button class="pc" data-a="persona" data-v="${p.id}"><span class="pph">${imgTag(p.id)}</span><b>${p.n}, ${p.age}</b><span class="lab">${p.label}</span></button>`).join('')}</div>
@@ -457,7 +461,7 @@ function vSheet(){const t=U.sheet;if(!t)return '';
 <div class="box"><div class="eyebrow" style="margin-bottom:8px">Loves</div><div class="chips">${p.acts.map(a=>`<span class="chip s">${a}</span>`).join('')}</div><div class="eyebrow" style="margin:14px 0 8px">Favourite trails</div><div class="chips">${p.spots.map(a=>`<span class="chip s">${a}</span>`).join('')}</div>${p.strava?`<div class="eyebrow" style="margin:14px 0 8px">Strava</div><div class="big3"><div><b>${p.s.h}</b><span>Hikes</span></div><div><b>${p.s.km}</b><span>km</span></div><div><b>${p.s.up}k</b><span>m up</span></div></div>`:`<div class="eyebrow" style="margin:14px 0 4px">Strava</div><div class="muted">Not connected yet</div>`}</div>
 <button class="btn terra" data-a="enter" data-v="${p.id}">Enter as ${p.n}</button></div></div>`}
  if(t.startsWith('hike:'))return `<div class="scrim" data-a="close"></div><div class="sheet">${vHikeSheet(HIKES.find(x=>x.id===t.slice(5)))}</div>`;
- if(t.startsWith('prof:')){const p=PEOPLE.find(x=>x.id===t.slice(5)),sh=shared(p);return `<div class="scrim" data-a="close"></div><div class="sheet"><div style="height:300px;position:relative">${PHOTOS[p.id]?imgTag(p.id,'hero').replace('<img ','<img style="object-position:50% '+(p.id==='ma'?'18':'30')+'%" '):scene(p.pal,p.id.length*7+p.age)}</div><div class="in" style="padding-top:14px"><div style="display:flex;justify-content:space-between;align-items:center"><h2 class="h1">${p.n}, ${p.age}</h2><span class="chip s sh">${compat(p)}% match</span></div><div class="muted" style="margin:2px 0 12px">${p.job} · ${p.area}</div><p class="serif" style="font-size:22px;line-height:1.2;margin:0 0 16px">“${p.q}”</p>
+ if(t.startsWith('prof:')){const p=PEOPLE.find(x=>x.id===t.slice(5)),sh=shared(p);return `<div class="scrim" data-a="close"></div><div class="sheet"><div style="height:300px;position:relative">${PHOTOS[p.id]?imgTag(p.id,'hero').replace('<img ','<img style="object-position:50% '+(p.id==='ma'?'18':'30')+'%" '):scene(p.pal,p.id.length*7+p.age)}</div><div class="in" style="padding-top:14px"><div style="display:flex;justify-content:space-between;align-items:center"><h2 class="h1">${p.n}, ${p.age}</h2><span class="chip s sh">${compat(p)}% match</span></div><div class="muted" style="margin:2px 0 12px">${p.job} · ${p.area}</div><p class="serif" style="font-size:22px;line-height:1.2;margin:0 0 12px">“${p.q}”</p>${p.d?`<p style="margin:0 0 16px;line-height:1.5">${p.d}</p>`:''}
  <div class="box"><div class="eyebrow" style="margin-bottom:8px">Trail stats this year</div><div class="big3"><div><b>${p.s.h}</b><span>Hikes</span></div><div><b>${p.s.km}</b><span>km</span></div><div><b>${p.s.up}k</b><span>m up</span></div></div></div>
  <div class="box"><div class="eyebrow" style="margin-bottom:8px">Loves</div><div class="chips">${p.acts.map(a=>`<span class="chip s ${sh.acts.includes(a)?'sh':''}">${a}</span>`).join('')}</div><div class="eyebrow" style="margin:14px 0 8px">Favourite trails</div><div class="chips">${p.spots.map(a=>`<span class="chip s ${sh.spots.includes(a)?'sh':''}">${a}</span>`).join('')}</div></div>
  ${S.matches[p.id]?`<button class="btn" data-a="chat" data-v="${p.id}">Message ${p.n}</button>`:`<div style="display:flex;gap:10px"><button class="btn ghost" data-a="pass2" data-v="${p.id}">Pass</button><button class="btn terra" data-a="like2" data-v="${p.id}">Like</button></div>`}</div></div>`}
@@ -520,7 +524,8 @@ document.addEventListener('input',e=>{if(e.target.id==='nm')S.name=e.target.valu
  const b=$('[data-a=obnext]');if(b&&S.step==='onb'&&S.ob===0)b.disabled=!S.name.trim()});
 document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el||el.tagName==='FORM')return;const a=el.dataset.a,v=el.dataset.v;
  switch(a){
-  case'start':S.step='persona';render();break;
+  case'start':S.step='onb';S.ob=0;S.persona=null;render();break;
+  case'skip':Object.assign(S,{step:'app',persona:null,name:S.name||'Alex',age:S.age||'30',strava:true,stats:{h:47,km:612,up:18.4},idx:0});S.tab='discover';render();break;
   case'own':S.step='onb';S.ob=0;S.persona=null;render();break;
   case'tobwelcome':S.step='welcome';render();break;
   case'persona':U.sheet='persona:'+v;render();break;
