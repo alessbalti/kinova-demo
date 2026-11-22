@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kinova</title></head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Jost:wght@300;400&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* Layout: a phone-sized app. Fullscreen on phones; framed phone + presenter panel on desktop.
+   Palette taken from the Kinova deck: forest, sage, cream, ink, terracotta. */
+:root{
+  --forest:#2e4e3c; --ink:#1e2b24; --sage:#829c79; --sage-l:#cbd6c4; --pale:#e3e9de; --cream:#e8e2d2; --terra:#b67b58;
+  --card:#f3f5ef; --muted:#5b6b60; --line:#cfd8c9;
+  --f-ui:'DM Sans',system-ui,sans-serif; --f-serif:'Cormorant Garamond',Georgia,serif; --f-logo:'Jost','DM Sans',sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:var(--forest);color:var(--ink);font-family:var(--f-ui);font-size:15px;overflow:hidden}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+input{font:inherit}
+svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.stage{height:100%;display:flex;align-items:center;justify-content:center;gap:72px}
+.panel{display:none;color:var(--cream);max-width:340px}
+.panel h2{font-family:var(--f-serif);font-style:italic;font-weight:500;font-size:34px;line-height:1.1;margin:22px 0 10px}
+.panel p{color:var(--sage-l);line-height:1.5;margin:0 0 20px}
+#qr{background:var(--cream);padding:12px;border-radius:12px;display:inline-block;line-height:0}
+.panel small{display:block;margin-top:10px;color:var(--sage);font-size:12px}
+.phone{width:390px;height:844px;flex:none;position:relative;background:var(--pale);overflow:hidden}
+.app{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--pale)}
+@media (min-width:760px){
+  .panel{display:block}
+  .phone{border-radius:50px;box-shadow:0 0 0 10px var(--ink),0 0 0 12px #3d5a49,0 30px 80px rgba(0,0,0,.45);transform-origin:center}
+  .phone::before{content:"";position:absolute;top:10px;left:50%;width:110px;height:28px;margin-left:-55px;background:var(--ink);border-radius:20px;z-index:60}
+  .status{display:flex!important}
+}
+@media (max-width:759px){
+  .phone{width:100vw;height:100%}
+  .stage{gap:0}
+}
+.status{display:none;justify-content:space-between;padding:14px 30px 0;font-size:13px;font-weight:600;height:44px;flex:none}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.pad{padding:8px 20px 24px}
+/* Logo */
+.wm{display:inline-flex;align-items:center;font-family:var(--f-logo);font-weight:300;letter-spacing:.08em;color:var(--cream)}
+.wm svg{margin:0 -.02em}
+h1,h2,h3{margin:0;letter-spacing:-.01em}
+.h1{font-size:28px;font-weight:700;line-height:1.1}
+.serif{font-family:var(--f-serif);font-style:italic;font-weight:500}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sage)}
+.muted{color:var(--muted)}
+/* Buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px 18px;border-radius:14px;background:var(--forest);color:var(--cream);font-weight:600;font-size:16px}
+.btn.terra{background:var(--terra);color:#fff}
+.btn.ghost{background:transparent;border:1.5px solid var(--forest);color:var(--forest)}
+.btn.cream{background:var(--cream);color:var(--forest)}
+.btn.sm{width:auto;padding:9px 14px;font-size:14px;border-radius:11px}
+.btn[disabled]{opacity:.4;pointer-events:none}
+:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+.link{color:var(--forest);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+/* Welcome / splash */
+.dark{background:var(--forest);color:var(--cream)}
+.welcome{height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:60px 24px 30px;text-align:center}
+.welcome .tag{font-family:var(--f-serif);font-style:italic;font-size:20px;color:var(--sage-l);margin-top:14px}
+.pulse{animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+.fade{animation:fade .35s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@media (prefers-reduced-motion:reduce){.pulse,.fade{animation:none}}
+/* Onboarding */
+.dots{display:flex;gap:6px;margin:6px 0 22px}
+.dots i{height:4px;flex:1;border-radius:3px;background:var(--sage-l)}
+.dots i.on{background:var(--forest)}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.field label{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.field input{padding:14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;width:100%}
+.seg{display:flex;background:var(--sage-l);border-radius:12px;padding:3px}
+.seg button{flex:1;padding:10px;border-radius:10px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--forest);color:var(--cream)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:9px 14px;border-radius:99px;border:1.5px solid var(--line);background:#fff;font-weight:500;font-size:14px}
+.chip.on{background:var(--forest);border-color:var(--forest);color:var(--cream)}
+.chip.s{padding:4px 10px;font-size:12px;background:var(--sage-l);border:0;color:var(--forest)}
+.chip.s.sh{background:var(--forest);color:var(--cream)}
+.spot{display:flex;gap:12px;align-items:center;padding:10px;border-radius:14px;background:#fff;border:1.5px solid var(--line);width:100%;text-align:left;margin-bottom:8px}
+.spot.on{border-color:var(--forest);background:#eef2ea}
+.spot .ph{width:52px;height:52px;border-radius:10px;overflow:hidden;flex:none}
+.spot .ph svg{width:100%;height:100%;display:block}
+.spot b{display:block}
+.spot span{font-size:13px;color:var(--muted)}
+.tick{margin-left:auto;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;color:transparent;flex:none}
+.on .tick{background:var(--forest);border-color:var(--forest);color:var(--cream)}
+.tick svg{width:14px;height:14px;stroke-width:3}
+/* Header */
+.top{display:flex;align-items:center;justify-content:space-between;padding:6px 20px 10px}
+.top .wmd{display:flex;align-items:center;gap:8px;font-family:var(--f-logo);font-weight:400;letter-spacing:.14em;color:var(--forest);font-size:18px}
+.iconbtn{width:38px;height:38px;border-radius:50%;background:var(--card);display:grid;place-items:center;border:1px solid var(--line)}
+/* Tabbar */
+.tabbar{display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 6px 10px;flex:none}
+.tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:var(--muted);padding:6px 0;position:relative}
+.tabbar button.on{color:var(--forest)}
+.tabbar button.on svg{stroke-width:2.4}
+.tabbar .guide{color:#fff}
+.tabbar .guide span.o{width:46px;height:46px;border-radius:50%;background:var(--forest);display:grid;place-items:center;margin-top:-22px;border:4px solid var(--card);color:var(--cream)}
+.tabbar .guide.on span.o{background:var(--terra)}
+.badge{position:absolute;top:2px;right:calc(50% - 20px);background:var(--terra);color:#fff;border-radius:99px;font-size:10px;min-width:16px;height:16px;display:grid;place-items:center;padding:0 4px}
+/* Discover */
+.deck{position:relative;height:540px;margin:4px 16px 0}
+.pcard{position:absolute;inset:0;border-radius:24px;overflow:hidden;background:var(--forest);color:#fff;box-shadow:0 10px 30px rgba(30,43,36,.25);touch-action:pan-y;user-select:none;cursor:grab}
+.pcard.back{transform:scale(.94) translateY(14px);filter:brightness(.85);pointer-events:none}
+.pcard .scene{position:absolute;inset:0}
+.pcard .scene svg{width:100%;height:100%;display:block}
+.pcard .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 38%,rgba(20,32,26,.92) 78%)}
+.pcard .info{position:absolute;left:0;right:0;bottom:0;padding:18px}
+.pcard .nm{font-size:27px;font-weight:700}
+.pcard .nm span{font-weight:400}
+.pcard .sub{font-size:13.5px;opacity:.9;margin:2px 0 8px}
+.match{position:absolute;top:14px;left:14px;background:var(--cream);color:var(--forest);font-weight:700;font-size:13px;padding:6px 11px;border-radius:99px;display:flex;gap:5px;align-items:center}
+.infob{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;background:rgba(30,43,36,.55);color:#fff;display:grid;place-items:center}
+.stats{display:flex;gap:0;margin:10px 0 8px;background:rgba(232,226,210,.14);border-radius:12px;padding:8px 4px}
+.stats div{flex:1;text-align:center}
+.stats b{display:block;font-size:16px}
+.stats span{font-size:10.5px;opacity:.8;letter-spacing:.06em;text-transform:uppercase}
+.stamp{position:absolute;top:60px;font-size:28px;font-weight:800;letter-spacing:.08em;padding:4px 12px;border:4px solid;border-radius:10px;opacity:0;transform:rotate(-12deg)}
+.stamp.l{left:20px;color:#9ee0a0;border-color:#9ee0a0}
+.stamp.p{right:20px;color:#f2a58a;border-color:#f2a58a;transform:rotate(12deg)}
+.acts{display:flex;justify-content:center;gap:22px;padding:18px 0 6px}
+.acts button{width:60px;height:60px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 4px 14px rgba(30,43,36,.15);color:var(--muted)}
+.acts button.go{background:var(--terra);color:#fff;width:68px;height:68px;margin-top:-4px}
+.acts svg{width:26px;height:26px}
+.daily{display:flex;justify-content:space-between;align-items:center;padding:0 20px 6px;font-size:13px;color:var(--muted)}
+.meter{display:flex;gap:4px}
+.meter i{width:22px;height:5px;border-radius:3px;background:var(--sage-l)}
+.meter i.on{background:var(--forest)}
+.done{margin:20px;padding:30px 22px;text-align:center;border-radius:24px;background:var(--forest);color:var(--cream)}
+.done h2{font-family:var(--f-serif);font-style:italic;font-weight:500;font-size:34px;line-height:1.05;margin:14px 0 8px}
+.done p{color:var(--sage-l);margin:0 0 18px;line-height:1.45}
+/* Sheets */
+.scrim{position:absolute;inset:0;background:rgba(20,32,26,.55);z-index:40;animation:fadei .2s}
+@keyframes fadei{from{opacity:0}}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:90%;background:var(--pale);border-radius:26px 26px 0 0;z-index:41;overflow-y:auto;animation:up .28s ease;scrollbar-width:none}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet .grab{width:40px;height:4px;border-radius:2px;background:var(--sage-l);margin:10px auto 4px}
+.sheet .in{padding:8px 22px 28px}
+.full{position:absolute;inset:0;z-index:30;background:var(--pale);display:flex;flex-direction:column;animation:fade .25s}
+.modal{position:absolute;inset:0;z-index:50;background:var(--forest);color:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;animation:fadei .25s}
+.modal h2{font-family:var(--f-serif);font-style:italic;font-weight:500;font-size:46px;margin:18px 0 6px}
+.pair{display:flex;margin:18px 0}
+.pair .av{margin:0 -10px;border:4px solid var(--forest)}
+.av{width:84px;height:84px;border-radius:50%;overflow:hidden;flex:none;display:block;background:var(--sage)}
+.av svg{width:100%;height:100%;display:block}
+.av.s{width:44px;height:44px}
+.av.m{width:58px;height:58px}
+/* Lists */
+.row{display:flex;gap:12px;align-items:center;padding:12px;border-radius:16px;background:var(--card);margin-bottom:8px;width:100%;text-align:left}
+.row .t{flex:1;min-width:0}
+.row b{display:block}
+.row .m{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--terra);flex:none}
+.sec{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 10px}
+.sec h3{font-size:18px}
+.hcard{border-radius:20px;background:var(--card);margin-bottom:14px;overflow:hidden;width:100%;text-align:left;display:block}
+.hcard .cv{height:112px;position:relative}
+.hcard .cv svg{width:100%;height:100%;display:block}
+.date{position:absolute;top:10px;left:10px;background:var(--cream);color:var(--forest);border-radius:12px;padding:5px 11px;text-align:center;line-height:1.05}
+.date b{display:block;font-size:20px}
+.date span{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.pill{position:absolute;top:10px;right:10px;background:var(--terra);color:#fff;font-size:11px;font-weight:700;padding:5px 10px;border-radius:99px}
+.pill.g{background:var(--forest)}
+.hcard .bd{padding:12px 14px 14px}
+.hcard h4{margin:0 0 4px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--muted)}
+.meta span{display:inline-flex;align-items:center;gap:4px}
+.meta svg{width:14px;height:14px}
+.facepile{display:flex;align-items:center;margin-top:10px;font-size:13px;color:var(--muted)}
+.facepile .av{width:26px;height:26px;margin-right:-8px;border:2px solid var(--card)}
+.facepile em{margin-left:16px;font-style:normal}
+.banner{display:flex;gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--forest);color:var(--cream);margin-bottom:16px}
+.banner b{display:block}
+.banner span{font-size:13px;color:var(--sage-l)}
+.sw{width:46px;height:28px;border-radius:99px;background:var(--sage);position:relative;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on{background:var(--terra)}
+.sw.on::after{left:21px}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{padding:8px 14px;border-radius:99px;font-weight:600;font-size:14px;background:var(--card);color:var(--muted)}
+.tabs button.on{background:var(--forest);color:var(--cream)}
+.leader{display:flex;gap:10px;align-items:center;padding:12px;background:#e9efe4;border-radius:14px;margin:14px 0;font-size:14px}
+.leader svg{color:var(--forest)}
+/* Chat */
+.chead{display:flex;align-items:center;gap:10px;padding:8px 14px 10px;border-bottom:1px solid var(--line)}
+.chead .t{flex:1;min-width:0}
+.msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px;scrollbar-width:none}
+.msg{max-width:78%;padding:10px 14px;border-radius:18px;line-height:1.35;font-size:15px;animation:fade .2s}
+.msg.them{background:var(--card);align-self:flex-start;border-bottom-left-radius:5px}
+.msg.me{background:var(--forest);color:var(--cream);align-self:flex-end;border-bottom-right-radius:5px}
+.msg.card{padding:0;overflow:hidden;width:78%}
+.quick{display:flex;gap:8px;overflow-x:auto;padding:6px 16px;scrollbar-width:none;flex:none}
+.quick button{white-space:nowrap;padding:8px 13px;border-radius:99px;background:#fff;border:1.5px solid var(--forest);color:var(--forest);font-weight:600;font-size:13.5px;display:flex;gap:6px;align-items:center}
+.quick button.pl{border-color:var(--terra);color:var(--terra)}
+.quick svg{width:15px;height:15px}
+.compose{display:flex;gap:8px;padding:8px 14px 14px;flex:none}
+.compose input{flex:1;padding:12px 16px;border-radius:99px;border:1.5px solid var(--line);background:#fff;min-width:0}
+.compose button{width:46px;height:46px;border-radius:50%;background:var(--forest);color:var(--cream);display:grid;place-items:center;flex:none}
+.typing{display:inline-flex;gap:4px;padding:14px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--sage);animation:bl 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bl{50%{opacity:.25;transform:translateY(-3px)}}
+.tcard{background:#fff;border-radius:16px;padding:12px;border:1px solid var(--line);margin-top:8px}
+.tcard h4{margin:0 0 6px;font-size:16px}
+.tcard .acts2{display:flex;gap:8px;margin-top:10px}
+.lockcard{background:#f6ece4;border:1.5px dashed var(--terra);border-radius:16px;padding:14px;margin-top:8px}
+.tl{margin:8px 0 0;padding:0;list-style:none}
+.tl li{display:flex;gap:10px;padding:5px 0;font-size:14px}
+.tl b{width:48px;flex:none;color:var(--forest)}
+/* Profile */
+.phero{background:var(--forest);color:var(--cream);padding:6px 20px 26px;text-align:center;border-radius:0 0 28px 28px}
+.phero .av{width:92px;height:92px;margin:6px auto 10px;border:4px solid var(--cream)}
+.plus{border-radius:20px;padding:18px;background:linear-gradient(135deg,#b67b58,#8e5a3d);color:#fff;margin-bottom:14px}
+.plus h3{font-size:20px;display:flex;align-items:center;gap:8px}
+.plus p{margin:4px 0 14px;opacity:.92;font-size:14px}
+.plus.on{background:linear-gradient(135deg,#2e4e3c,#3e6650)}
+.box{background:var(--card);border-radius:18px;padding:16px;margin-bottom:14px}
+.big3{display:flex;margin-top:8px}
+.big3 div{flex:1}
+.big3 b{font-size:22px;display:block}
+.big3 span{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.perks{list-style:none;padding:0;margin:14px 0}
+.perks li{display:flex;gap:10px;padding:7px 0;font-size:15px;align-items:flex-start}
+.perks svg{color:var(--forest);margin-top:1px}
+.price{font-size:40px;font-weight:700;letter-spacing:-.02em}
+.price small{font-size:16px;font-weight:500;color:var(--muted)}
+.stars{display:flex;gap:6px;margin:8px 0 16px}
+.stars button{color:var(--sage-l)}
+.stars button.on{color:var(--terra)}
+.stars svg{width:36px;height:36px;fill:currentColor}
+.toast{position:absolute;left:20px;right:20px;bottom:90px;background:var(--ink);color:var(--cream);padding:13px 16px;border-radius:14px;z-index:70;font-size:14px;animation:fade .25s;text-align:center}
+.spin{width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.note{font-size:11.5px;color:var(--muted);text-align:center;padding:4px 20px 14px}
+</style>
+
+<div class="stage">
+  <div class="panel">
+    <div id="pl"></div>
+    <h2>Swipe less. Hike more.</h2>
+    <p>Interactive prototype of Kinova. Scan the code to open it on your phone and try every feature.</p>
+    <div id="qr"></div>
+    <small>Profiles shown are illustrated placeholders, not real people.</small>
+  </div>
+  <div class="phone" id="phone"><div class="app" id="app"></div></div>
+</div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const P={
+ compass:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+ mountain:'<path d="M3 19l6-10 4 6 2-3 6 7z"/>',
+ spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"/>',
+ chat:'<path d="M4 5h16v11H9l-5 4z"/>', user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
+ x:'<path d="M6 6l12 12M18 6L6 18"/>', heart:'<path d="M12 20S4 14.5 4 9a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 5.5-8 11-8 11z"/>',
+ star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+ lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+ check:'<path d="M5 12l5 5 9-10"/>', back:'<path d="M15 5l-7 7 7 7"/>', send:'<path d="M4 12l16-8-6 16-3-7z"/>',
+ pin:'<path d="M12 21s-6-6-6-11a6 6 0 0 1 12 0c0 5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c.7-3.5 3.3-5 7-5s6.3 1.5 7 5"/><path d="M16 5a3.5 3.5 0 0 1 0 7M18 15c2 .5 3.5 2 4 5"/>',
+ copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+ info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/>', shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+ bolt:'<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>', gift:'<rect x="4" y="9" width="16" height="11" rx="1"/><path d="M12 9v11M3 9h18V6H3zM12 6c-2 0-4-1-4-2.500S10 2 12 6c2-4 4-3.500 4-2S14 6 12 6z"/>',
+ trend:'<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>', cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>'
+};
+const ic=n=>`<svg class="i" viewBox="0 0 24 24">${P[n]}</svg>`;
+function heart(sz){return `<svg viewBox="0 0 100 94" width="${sz}" height="${sz*.94}" aria-hidden="true"><defs><clipPath id="hc${sz}"><path d="M50 86 L14 50 C1 37 3 18 17 11 C30 5 44 10 50 22 C56 10 70 5 83 11 C97 18 99 37 86 50 Z"/></clipPath></defs>
+<path d="M50 86 L14 50 C1 37 3 18 17 11 C30 5 44 10 50 22 C56 10 70 5 83 11 C97 18 99 37 86 50 Z" fill="#829c79"/>
+<g clip-path="url(#hc${sz})"><path d="M18 72 L41 53 L47 62 L52 67 L58 57 L64 47 L72 62 L84 72 L50 94 Z" fill="#1e2b24"/><path d="M41 53 L37 60 L45 57Z M64 47 L59 57 L68 54Z" fill="#e8e2d2"/></g>
+<path d="M50 86 L14 50 C1 37 3 18 17 11 C30 5 44 10 50 22 C56 10 70 5 83 11 C97 18 99 37 86 50 Z" fill="none" stroke="#e8e2d2" stroke-width="7" stroke-linejoin="round"/></svg>`}
+function wordmark(h){return `<span class="wm" style="font-size:${h}px">KIN${heart(h*.95)}VA</span>`}
+
+const PAL=[['#f6c28b','#d98a5f','#6b8f71','#3b5e49','#223a2d'],['#bcd9e8','#8fb7c9','#7fa08a','#4a7360','#2a4a3a'],['#f2d7a8','#cfa173','#8b9e72','#566f4d','#2e4a38'],['#c8d9d2','#9fb8b0','#6f8f7f','#44655a','#27423a'],['#f0b9a0','#c98a82','#8f8a86','#5c6b66','#34453f'],['#d4e0b8','#a9c08a','#7a9a68','#4c7050','#2b4a37']];
+function scene(pi,seed,person=true){const c=PAL[pi%PAL.length];const r=n=>((Math.sin(seed*9301+n*49297)*233280)%1+1)%1;
+ const m=(base,amp,col,k)=>{let d=`M0 ${base}`;for(let x=0;x<=10;x++){d+=` L${x*40} ${base-amp*(.4+.6*r(k+x))}`}return `<path d="${d} L400 600 L0 600Z" fill="${col}"/>`};
+ let trees='';for(let i=0;i<9;i++){const x=20+i*44+r(i)*20,y=470+r(i+20)*40,s=.7+r(i+30)*.6;trees+=`<path d="M${x} ${y-50*s} l${14*s} ${50*s} h${-28*s}z M${x} ${y-30*s} l${18*s} ${40*s} h${-36*s}z" fill="${c[4]}"/>`}
+ const ppl=person?`<g transform="translate(${130+r(5)*70} 190) scale(1.25)"><circle cx="40" cy="28" r="22" fill="#e8e2d2" opacity=".92"/><path d="M-6 150 C-6 80 14 62 40 62 S86 80 86 150Z" fill="#e8e2d2" opacity=".92"/><rect x="62" y="74" width="22" height="46" rx="8" fill="${c[3]}"/></g>`:'';
+ return `<svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="s${pi}_${seed}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c[0]}"/><stop offset="1" stop-color="${c[1]}"/></linearGradient></defs><rect width="400" height="600" fill="url(#s${pi}_${seed})"/><circle cx="${90+r(1)*220}" cy="${130+r(2)*60}" r="46" fill="#fff" opacity=".55"/>${m(330,150,c[2],1)}${m(400,130,c[3],14)}${m(520,90,c[4],30)}${trees}${ppl}</svg>`}
+function avatar(p,cls=''){return `<span class="av ${cls}"><svg viewBox="0 0 100 100"><rect width="100" height="100" fill="${PAL[p.pal][1]}"/><circle cx="50" cy="40" r="19" fill="#e8e2d2"/><path d="M12 100C12 68 30 58 50 58S88 68 88 100Z" fill="#e8e2d2"/><path d="M0 100 L25 78 L45 100Z M40 100 L72 70 L100 100Z" fill="${PAL[p.pal][3]}" opacity=".9"/></svg></span>`}
+
+/* ---------- data ---------- */
+const ACTS=['Hiking','Trail running','Camping','Climbing','Mountain biking','Kayaking','Snowshoeing','Yoga','Photography','Skiing','Local food','Strava'];
+const SPOTS=[
+ {n:'Mont-Royal',a:'Montréal',km:7.2,up:230,lvl:'Easy',drive:'20 min',fee:'Free',pal:5,d:'City summit loop with skyline views.'},
+ {n:'Mont Saint-Bruno',a:'Saint-Bruno',km:9.5,up:180,lvl:'Easy',drive:'25 min',fee:'$10.30 Sépaq',pal:1,d:'Five lakes and gentle forest trails.'},
+ {n:'Mont Saint-Hilaire',a:'Gault Reserve',km:8.4,up:420,lvl:'Moderate',drive:'35 min',fee:'Reserve fee',pal:0,d:'Rocky summit over Lac Hertel.'},
+ {n:'Parc d\'Oka',a:'Oka',km:10.8,up:260,lvl:'Moderate',drive:'50 min',fee:'$10.30 Sépaq',pal:2,d:'Calvaire trail and the lake shore.'},
+ {n:'Mont Orford',a:'Estrie',km:11.5,up:520,lvl:'Hard',drive:'1 h 30',fee:'$10.30 Sépaq',pal:3,d:'Big ridgeline day trip.'},
+ {n:'Mont-Tremblant',a:'Laurentians',km:12.6,up:610,lvl:'Hard',drive:'1 h 45',fee:'$10.30 Sépaq',pal:4,d:'Weekend-trip scale views.'}];
+const spotBy=n=>SPOTS.find(s=>s.n===n);
+const PEOPLE=[
+ {id:'camille',n:'Camille',age:29,g:'w',area:'Rosemont',job:'Nurse · Sunrise chaser',acts:['Hiking','Camping','Climbing','Photography'],spots:['Mont Saint-Bruno','Mont Saint-Hilaire','Parc d\'Oka'],s:{h:52,km:640,up:21},q:'I\'d rather meet someone at the top of a mountain than at the bottom of a pint.',likes:1,pal:0},
+ {id:'lea',n:'Léa',age:27,g:'w',area:'Plateau',job:'Designer · Trail runner',acts:['Trail running','Hiking','Yoga','Local food'],spots:['Mont-Royal','Mont Saint-Bruno','Mont Orford'],s:{h:38,km:512,up:16},q:'Fast on the downhills, slow on the snack breaks.',likes:1,pal:1},
+ {id:'sarah',n:'Sarah-Jade',age:31,g:'w',area:'Verdun',job:'Teacher · Weekend camper',acts:['Camping','Hiking','Kayaking','Photography'],spots:['Parc d\'Oka','Mont Orford','Mont-Tremblant'],s:{h:29,km:388,up:12},q:'Tent packed. Looking for a co-pilot for Tremblant.',likes:0,pal:2},
+ {id:'isa',n:'Isabelle',age:39,g:'w',area:'Brossard',job:'Manager · Back on the trail',acts:['Hiking','Yoga','Local food','Snowshoeing'],spots:['Mont Saint-Hilaire','Mont Saint-Bruno','Mont-Royal'],s:{h:24,km:301,up:7},q:'Free weekends are precious. I\'d rather spend one outside.',likes:1,pal:3},
+ {id:'emilie',n:'Émilie',age:33,g:'w',area:'Villeray',job:'Physio · Climber',acts:['Climbing','Hiking','Skiing','Strava'],spots:['Mont Orford','Mont-Tremblant','Mont Saint-Hilaire'],s:{h:41,km:455,up:19},q:'Show me your Strava, I\'ll show you my route.',likes:0,pal:4},
+ {id:'ma',n:'Marc-Antoine',age:30,g:'m',area:'Griffintown',job:'Engineer · Mountain biker',acts:['Mountain biking','Hiking','Camping','Kayaking'],spots:['Mont Saint-Bruno','Parc d\'Oka','Mont Orford'],s:{h:33,km:590,up:17},q:'Two wheels down, two boots up.',likes:1,pal:5},
+ {id:'sam',n:'Samuel',age:34,g:'m',area:'Hochelaga',job:'Chef · Trail snack expert',acts:['Hiking','Local food','Camping','Photography'],spots:['Mont-Royal','Mont Saint-Hilaire','Parc d\'Oka'],s:{h:27,km:340,up:10},q:'I pack the picnic. You pick the summit.',likes:0,pal:2},
+ {id:'jul',n:'Julien',age:36,g:'m',area:'Longueuil',job:'Photographer · Early riser',acts:['Photography','Hiking','Skiing','Snowshoeing'],spots:['Mont Saint-Bruno','Mont-Tremblant','Mont Saint-Hilaire'],s:{h:46,km:520,up:20},q:'Golden hour is a lifestyle.',likes:1,pal:1}];
+const HIKES=[
+ {id:'h1',t:'Launch hike with our creators',d:'Sat May 22',mo:'MAY',day:22,time:'9:00',spot:'Mont Saint-Bruno',cap:30,left:11,tag:'Long weekend',diff:'Easy',km:9.5,pal:1,meet:'Park visitor centre',big:1},
+ {id:'h2',t:'Golden hour on the mountain',d:'Sat Jun 5',mo:'JUN',day:5,time:'18:00',spot:'Mont-Royal',cap:15,left:6,diff:'Easy',km:7.2,pal:5,meet:'Beaver Lake pavilion'},
+ {id:'h3',t:'Sunrise hike',d:'Sat Jun 19',mo:'JUN',day:19,time:'5:15',spot:'Mont Saint-Hilaire',cap:15,left:4,tag:'Peak date',diff:'Moderate',km:8.4,pal:0,meet:'Gault Reserve entrance'},
+ {id:'h4',t:'Lakeshore and Calvaire loop',d:'Sat Jun 26',mo:'JUN',day:26,time:'10:00',spot:'Parc d\'Oka',cap:15,left:9,diff:'Moderate',km:10.8,pal:2,meet:'Park access, Parking P1'},
+ {id:'h5',t:'Five lakes walk',d:'Sat Jul 10',mo:'JUL',day:10,time:'9:30',spot:'Mont Saint-Bruno',cap:15,left:12,diff:'Easy',km:9.5,pal:3,meet:'Park visitor centre',next:1},
+ {id:'h6',t:'Ridgeline day trip',d:'Sat Jul 24',mo:'JUL',day:24,time:'8:30',spot:'Mont Orford',cap:15,left:13,diff:'Hard',km:11.5,pal:4,meet:'Carpool from Longueuil metro',next:1}];
+
+/* ---------- state ---------- */
+const KEY='kinova_demo_v1';
+const base=()=>({step:'splash',ob:0,name:'',age:'',interest:'all',acts:['Hiking','Mountain biking','Camping'],spots:['Mont Saint-Bruno','Mont Orford'],strava:false,plus:false,tab:'discover',idx:0,liked:[],passed:[],matches:{},unread:{},reg:[],notify:false,filter:'all',guide:null,doneSurvey:[]});
+let S=base();
+try{const r=localStorage.getItem(KEY);if(r){S=Object.assign(base(),JSON.parse(r));if(S.step==='splash')S.step='welcome'}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+let U={sheet:null,chat:null,toast:null,match:null,survey:null,busy:false};
+const me=()=>({n:S.name||'You'});
+function compat(p){const a=p.acts.filter(x=>S.acts.includes(x)).length,s=p.spots.filter(x=>S.spots.includes(x)).length;return Math.min(98,62+a*7+s*9)}
+const shared=p=>({acts:p.acts.filter(x=>S.acts.includes(x)),spots:p.spots.filter(x=>S.spots.includes(x))});
+function queue(){let l=PEOPLE.filter(p=>S.interest==='all'||p.g===S.interest);l=l.sort((a,b)=>(b.likes-a.likes)||(compat(b)-compat(a))).slice(0,6);return l}
+function toast(t){U.toast=t;render();clearTimeout(toast.t);toast.t=setTimeout(()=>{U.toast=null;render()},2200)}
+
+/* ---------- views ---------- */
+function vSplash(){return `<div class="dark welcome" style="justify-content:center;gap:20px"><div class="pulse">${heart(110)}</div>${wordmark(30)}</div>`}
+function vWelcome(){return `<div class="dark welcome"><div></div><div class="fade">${wordmark(40)}<div class="tag">kin (your people) + nova (new)</div><p style="color:var(--cream);font-size:19px;margin:24px 0 0">New people, found on the trail.</p></div>
+<div class="fade"><div style="display:flex;justify-content:center;gap:8px;margin-bottom:18px;color:var(--sage-l);font-size:13px"><span>Match outdoors</span>·<span>Meet outdoors</span></div>
+<button class="btn cream" data-a="start">Get started</button><button class="btn" style="background:transparent;color:var(--sage-l);margin-top:6px;font-size:14px" data-a="skip">Skip setup, explore the demo</button></div></div>`}
+function vOnb(){const st=S.ob;let body='',ok=true,title='',sub='';
+ if(st===0){title='Let\'s build your trail profile';sub='Just the basics.';ok=S.name.trim().length>0;
+  body=`<div class="field"><label for="nm">First name</label><input id="nm" value="${esc(S.name)}" placeholder="Your first name" autocomplete="off"></div>
+  <div class="field"><label for="ag">Age</label><input id="ag" value="${esc(S.age)}" inputmode="numeric" maxlength="2" placeholder="29" autocomplete="off"></div>
+  <div class="field"><label>I want to meet</label><div class="seg">${[['w','Women'],['m','Men'],['all','Everyone']].map(([k,l])=>`<button data-a="int" data-v="${k}" class="${S.interest===k?'on':''}">${l}</button>`).join('')}</div></div>`}
+ if(st===1){title='What do you love doing outside?';sub='Pick as many as you like. Matches start here.';ok=S.acts.length>0;
+  body=`<div class="chips">${ACTS.map(a=>`<button class="chip ${S.acts.includes(a)?'on':''}" data-a="act" data-v="${a}">${a}</button>`).join('')}</div>`}
+ if(st===2){title='Your favourite hiking spots';sub='All under two hours from Montréal.';ok=S.spots.length>0;
+  body=SPOTS.map(s=>`<button class="spot ${S.spots.includes(s.n)?'on':''}" data-a="spot" data-v="${esc(s.n)}"><span class="ph">${scene(s.pal,s.km*3,false)}</span><div><b>${s.n}</b><span>${s.a} · ${s.drive} · ${s.lvl}</span></div><i class="tick">${ic('check')}</i></button>`).join('')}
+ if(st===3){title='Let your trails do the talking';sub='Connect Strava so your profile shows real hikes, not just photos.';
+  body=`<div class="box" style="text-align:center"><div style="font-size:15px;font-weight:700;color:#fc4c02;margin-bottom:6px">STRAVA</div>${S.strava?`<div class="big3" style="text-align:center"><div><b>47</b><span>Hikes</span></div><div><b>612 km</b><span>Distance</span></div><div><b>18.4k m</b><span>Elevation</span></div></div><p class="muted" style="margin:14px 0 0">Connected. Shown on your profile.</p>`:`<p class="muted">Optional. You can add it later.</p><button class="btn" data-a="strava">${U.busy?'<span class="spin"></span>Connecting':'Connect Strava'}</button>`}</div>
+  <div class="box"><b>First hikes happen in a group.</b><p class="muted" style="margin:6px 0 0">A safer, more natural first date, with other people around and a first-aid certified hike leader.</p></div>`}
+ return `<div class="pad fade" style="padding-top:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">${st>0?`<button class="iconbtn" data-a="obback">${ic('back')}</button>`:'<span></span>'}<span class="eyebrow">Step ${st+1} of 4</span></div><div class="dots">${[0,1,2,3].map(i=>`<i class="${i<=st?'on':''}"></i>`).join('')}</div>
+ <h1 class="h1" style="margin-bottom:6px">${title}</h1><p class="muted" style="margin:0 0 20px">${sub}</p>${body}
+ <div style="height:14px"></div><button class="btn" data-a="obnext" ${ok?'':'disabled'}>${st===3?'Enter Kinova':'Continue'}</button></div>`}
+
+function hdr(){return `<div class="top"><div class="wmd">${heart(26)}<span>KINOVA</span></div><button class="iconbtn" data-a="sheet" data-v="plus" aria-label="Kinova Plus" style="color:${S.plus?'var(--terra)':'var(--forest)'}">${ic('bolt')}</button></div>`}
+
+function card(p,back){const sh=shared(p);return `<div class="pcard ${back?'back':''}" ${back?'':'id="top"'} data-id="${p.id}">
+ <div class="scene">${scene(p.pal,p.id.length*7+p.age)}</div><div class="shade"></div>
+ <div class="match">${ic('heart').replace('class="i"','class="i" style="width:14px;height:14px;fill:#b67b58;stroke:#b67b58"')}${compat(p)}% trail match</div>
+ <button class="infob" data-a="profile" data-v="${p.id}" aria-label="Full profile">${ic('info')}</button>
+ <div class="stamp l">HIKE</div><div class="stamp p">PASS</div>
+ <div class="info"><div class="nm">${p.n} <span>${p.age}</span></div><div class="sub">${p.job} · ${p.area}</div>
+ <div class="stats"><div><b>${p.s.h}</b><span>Hikes</span></div><div><b>${p.s.km}</b><span>km</span></div><div><b>${p.s.up}k</b><span>m up</span></div></div>
+ <div class="chips" style="gap:6px">${p.spots.slice(0,2).map(x=>`<span class="chip s ${sh.spots.includes(x)?'sh':''}">${ic('pin').replace('class="i"','class="i" style="width:12px;height:12px;margin-right:3px;vertical-align:-1px"')}${x}</span>`).join('')}${sh.acts.slice(0,1).map(x=>`<span class="chip s sh">${x}</span>`).join('')}</div></div></div>`}
+
+function vDiscover(){const q=queue();const left=q.slice(S.idx);
+ const bar=`<div class="daily"><span>Today's picks · ${Math.min(S.idx+1,q.length)} of ${q.length}</span><div class="meter">${q.map((_,i)=>`<i class="${i<S.idx?'on':''}"></i>`).join('')}</div></div>`;
+ if(!left.length)return hdr()+`<div class="done fade">${heart(70)}<h2>That's it for today.<br>Now go hike.</h2><p>Kinova gives you a few well-matched people a day instead of endless swiping. Meet them outdoors.</p><button class="btn cream" data-a="tab" data-v="hikes">See group hikes</button><button class="btn" style="background:transparent;color:var(--sage-l);margin-top:6px" data-a="replay">Replay today's picks</button></div>`;
+ return hdr()+bar+`<div class="deck">${left[1]?card(left[1],true):''}${card(left[0])}</div>
+ <div class="acts"><button data-a="pass" aria-label="Pass">${ic('x')}</button><button class="go" data-a="like" aria-label="Like">${ic('heart').replace('class="i"','class="i" style="fill:#fff"')}</button><button data-a="profile" data-v="${left[0].id}" aria-label="Profile">${ic('info')}</button></div><div class="note">Drag the card or tap a button. Illustrated placeholders, not real people.</div>`}
+
+function vHikes(){const f=S.filter;let list=HIKES.filter(h=>f==='all'||(f==='mine'&&S.reg.includes(h.id))||(f==='jul'&&h.mo==='JUL'));
+ const mine=S.reg.length;
+ return hdr()+`<div class="pad"><h1 class="h1">Group hikes</h1><p class="muted" style="margin:4px 0 14px">Your first date, with other people around.</p>
+ <div class="tabs">${[['all','All'],['mine','My hikes'+(mine?` (${mine})`:'')],['jul','Next month']].map(([k,l])=>`<button class="${f===k?'on':''}" data-a="filter" data-v="${k}">${l}</button>`).join('')}</div>
+ ${f==='jul'||f==='all'?`<div class="banner">${ic('cal')}<div style="flex:1"><b>July hikes go out Sunday</b><span>Next month's list first, so you can plan early.</span></div><button class="sw ${S.notify?'on':''}" data-a="notify" aria-label="Notify me"></button></div>`:''}
+ ${list.length?list.map(h=>{const reg=S.reg.includes(h.id);return `<button class="hcard" data-a="hike" data-v="${h.id}"><div class="cv">${scene(h.pal,h.day*5,false)}<div class="date"><b>${h.day}</b><span>${h.mo}</span></div>${reg?`<span class="pill g">You're going</span>`:h.tag?`<span class="pill">${h.tag}</span>`:''}</div>
+ <div class="bd"><h4>${h.t}</h4><div class="meta"><span>${ic('pin')}${h.spot}</span><span>${ic('clock')}${h.time}</span><span>${ic('mountain')}${h.diff} · ${h.km} km</span></div>
+ <div class="facepile">${PEOPLE.slice(0,4).map(p=>avatar(p)).join('')}<em>${h.cap-h.left} going · ${h.left} spots left</em></div></div></button>`}).join(''):`<div class="empty">${ic('cal')}<p>No hikes yet. Tap one to register.</p></div>`}
+ </div>`}
+
+function vMatches(){const ids=Object.keys(S.matches);
+ return hdr()+`<div class="pad"><h1 class="h1">Matches</h1><p class="muted" style="margin:4px 0 16px">${ids.length?'People who like the same trails as you.':'Like someone in Discover to start a conversation.'}</p>
+ ${ids.map(id=>{const p=PEOPLE.find(x=>x.id===id),ms=S.matches[id],l=ms[ms.length-1];return `<button class="row" data-a="chat" data-v="${id}">${avatar(p,'m')}<div class="t"><b>${p.n}, ${p.age}</b><div class="m">${esc(l.t||'Shared a hike')}</div></div>${S.unread[id]?'<i class="dot"></i>':''}</button>`}).join('')}
+ ${!ids.length?`<div class="empty">${ic('heart')}<p>No matches yet.</p><button class="btn sm" data-a="tab" data-v="discover" style="margin:0 auto">Go to Discover</button></div>`:''}
+ <div class="box" style="margin-top:14px"><b>Meet on a group hike first</b><p class="muted" style="margin:6px 0 12px">Invite a match to a hike. Everyone gets a safer first date with a first-aid certified leader.</p><button class="btn ghost sm" data-a="tab" data-v="hikes">Browse hikes</button></div></div>`}
+
+function vChat(){const p=PEOPLE.find(x=>x.id===U.chat);const ms=S.matches[p.id];
+ return `<div class="full"><div class="status" style="height:44px"></div><div class="chead"><button class="iconbtn" data-a="chatback">${ic('back')}</button>${avatar(p,'s')}<div class="t"><b>${p.n}</b><div class="m muted" style="font-size:12px">${compat(p)}% trail match</div></div><button class="iconbtn" data-a="profile" data-v="${p.id}">${ic('info')}</button></div>
+ <div class="msgs" id="msgs">${ms.map(msg).join('')}</div>
+ <div class="quick"><button data-a="q" data-v="hike">${ic('mountain')}Hike this weekend?</button><button data-a="q" data-v="group">${ic('users')}Invite to group hike</button><button data-a="q" data-v="guide" class="pl">${ic('spark')}Trail Guide</button><button data-a="q" data-v="date" class="pl">${ic('lock')}Plan hike date</button></div>
+ <form class="compose" data-a="send"><input id="ci" placeholder="Message ${p.n}" autocomplete="off"><button aria-label="Send">${ic('send')}</button></form></div>`}
+function msg(m){if(m.hike){const h=HIKES.find(x=>x.id===m.hike);return `<div class="msg card ${m.me?'me':'them'}"><div style="height:70px">${scene(h.pal,h.day*5,false)}</div><div style="padding:10px 12px"><b>${h.t}</b><div style="font-size:13px;opacity:.85">${h.d} · ${h.time} · ${h.spot}</div></div></div>`}
+ return `<div class="msg ${m.me?'me':'them'}">${esc(m.t)}</div>`}
+
+/* Trail guide */
+function trailCard(s,ctx){return `<div class="tcard"><h4>${s.n}</h4><div class="meta"><span>${ic('mountain')}${s.lvl} · ${s.km} km · +${s.up} m</span><span>${ic('clock')}${s.drive}</span><span>${ic('pin')}${s.fee}</span></div><p style="margin:8px 0 0;font-size:14px;color:var(--muted)">${s.d}${ctx?` ${ctx}`:''}</p><div class="acts2"><button class="btn sm" data-a="tab" data-v="hikes">Group hikes here</button></div></div>`}
+function lock(){return `<div class="lockcard"><b style="display:flex;gap:6px;align-items:center">${ic('lock')} Kinova Plus</b><p style="margin:6px 0 10px;font-size:14px">Trail Guide plans the whole date: meeting point, timing, packing list and a post-hike stop.</p><button class="btn terra sm" data-a="sheet" data-v="plus">Start free month</button></div>`}
+function plan(sp,withN){return `<div class="tcard"><h4>Hike date plan${withN?' with '+withN:''}</h4><div class="meta"><span>${ic('pin')}${sp.n}</span><span>${ic('cal')}Sat, free weekend</span></div><ul class="tl"><li><b>8:30</b>Meet at the park entrance (${sp.drive} from the city)</li><li><b>9:00</b>Start the ${sp.km} km loop, ${sp.lvl.toLowerCase()} pace</li><li><b>11:30</b>Lunch at the viewpoint</li><li><b>13:30</b>Coffee in the village on the way back</li></ul><div class="chips" style="margin-top:8px"><span class="chip s">Water 1.5 L</span><span class="chip s">Layers</span><span class="chip s">Snacks for two</span><span class="chip s">Offline map</span></div>${withN?`<div class="acts2"><button class="btn sm" data-a="sendplan">Send to ${withN}</button></div>`:''}</div>`}
+function guideReply(q,ctxP){const t=q.toLowerCase();const mine=SPOTS.filter(s=>S.spots.includes(s.n));
+ const planReq=/plan|date|itinerary/.test(t);
+ if(planReq){if(!S.plus)return {t:'I can build the full plan for you with Kinova Plus.',h:lock()};
+   const sp=ctxP?spotBy(shared(ctxP).spots[0]||ctxP.spots[0]):mine[0]||SPOTS[1];return {t:`Here's a plan that suits ${ctxP?'you both':'your weekend'}.`,h:plan(sp,ctxP&&ctxP.n)}}
+ if(/trip|orford|tremblant|weekend away|camp/.test(t)){if(!S.plus)return {t:'Weekend trips are part of Kinova Plus.',h:lock()};return {t:'Two options for a weekend away. Both under two hours from Montréal.',h:trailCard(spotBy('Mont Orford'))+trailCard(spotBy('Mont-Tremblant'))}}
+ if(/sunrise|early|dawn/.test(t))return {t:'For sunrise, Mont Saint-Hilaire faces east and the summit is reached in about 90 minutes. Bring a headlamp.',h:trailCard(spotBy('Mont Saint-Hilaire'))};
+ if(/easy|beginner|chill|short|first/.test(t))return {t:'Easy and good for a first conversation. You can talk the whole way.',h:trailCard(spotBy('Mont Saint-Bruno'))+trailCard(spotBy('Mont-Royal'))};
+ if(/water|lake|kayak|swim/.test(t))return {t:'Lakes close to the city:',h:trailCard(spotBy('Mont Saint-Bruno'),'Pack a picnic for the shore.')+trailCard(spotBy('Parc d\'Oka'))};
+ const r=(ctxP?SPOTS.filter(s=>ctxP.spots.includes(s.n)&&S.spots.includes(s.n)):mine);const pick=(r.length?r:SPOTS).slice(0,2);
+ return {t:ctxP?`You and ${ctxP.n} both like these. Good first-hike candidates:`:'Based on your favourite spots, you might enjoy these this weekend:',h:pick.map(s=>trailCard(s)).join('')}}
+function vGuide(){const g=S.guide||{ctx:null,m:[]};const cp=g.ctx?PEOPLE.find(x=>x.id===g.ctx):null;
+ const sug=cp?[`Easy trail for us`,`Plan the date with ${cp.n}`,`Where did we both hike?`]:['Easy trail near me','Best sunrise hike','Plan a first date','Weekend trip to Orford'];
+ return hdr()+`<div style="display:flex;flex-direction:column;height:calc(100% - 54px)"><div class="pad" style="padding-bottom:0"><div style="display:flex;gap:12px;align-items:center"><span style="width:44px;height:44px;border-radius:50%;background:var(--forest);color:var(--cream);display:grid;place-items:center">${ic('spark')}</span><div><h1 class="h1" style="font-size:22px">AI Trail Guide</h1><div class="muted" style="font-size:13px">${cp?`Planning for you and ${cp.n}`:'Trails near you, picked for your matches'}</div></div></div></div>
+ <div class="msgs" id="gm"><div class="msg them">Hi${S.name?' '+esc(S.name):''}! Tell me what kind of day you want and I'll find the trail.</div>${g.m.map(x=>x.me?`<div class="msg me">${esc(x.t)}</div>`:`<div class="msg them" style="max-width:92%">${esc(x.t)}${x.h||''}</div>`).join('')}${g.typing?'<div class="msg them typing"><i></i><i></i><i></i></div>':''}</div>
+ <div class="quick">${sug.map(s=>`<button data-a="gq" data-v="${esc(s)}">${s}</button>`).join('')}</div>
+ <form class="compose" data-a="gsend"><input id="gi" placeholder="Ask the Trail Guide" autocomplete="off"><button aria-label="Send">${ic('send')}</button></form></div>`}
+
+function vProfile(){const hk=S.reg.length;
+ return `<div class="phero"><div style="display:flex;justify-content:flex-end"><button class="iconbtn" data-a="sheet" data-v="settings" style="background:rgba(232,226,210,.15);border:0;color:var(--cream)">${ic('info')}</button></div>${avatar({pal:1},'')}<h1 class="h1" style="font-size:26px">${esc(S.name||'You')}${S.age?`, ${esc(S.age)}`:''}</h1><div style="color:var(--sage-l);margin-top:4px;font-size:14px">${S.plus?'Kinova Plus member':'Kinova member'} · Greater Montréal</div></div>
+ <div class="pad" style="padding-top:18px">
+ <div class="plus ${S.plus?'on':''}"><h3>${ic('bolt')} Kinova Plus</h3><p>${S.plus?'Active. Trail Guide plans your hike dates and weekend trips.':'$10 a month. First month free. Plan hike dates and weekend trips with the AI Trail Guide.'}</p>${S.plus?`<button class="btn cream sm" data-a="sheet" data-v="plus">Manage</button>`:`<button class="btn cream sm" data-a="sheet" data-v="plus">Start free month</button>`}</div>
+ <div class="box"><div class="sec" style="margin:0"><h3>Strava</h3>${S.strava?'<span class="eyebrow" style="color:var(--forest)">Connected</span>':''}</div>${S.strava?`<div class="big3"><div><b>47</b><span>Hikes</span></div><div><b>612</b><span>km</span></div><div><b>18.4k</b><span>m up</span></div></div>`:`<p class="muted" style="margin:6px 0 12px">Show real hikes on your profile.</p><button class="btn ghost sm" data-a="strava">${U.busy?'<span class="spin" style="border-color:rgba(46,78,60,.3);border-top-color:var(--forest)"></span>':'Connect Strava'}</button>`}</div>
+ <div class="box"><h3 style="margin-bottom:10px">Loves</h3><div class="chips">${S.acts.map(a=>`<span class="chip s">${a}</span>`).join('')}</div><h3 style="margin:16px 0 10px">Favourite trails</h3><div class="chips">${S.spots.map(a=>`<span class="chip s">${a}</span>`).join('')}</div></div>
+ <div class="box" style="background:var(--forest);color:var(--cream)"><div style="display:flex;gap:10px;align-items:center">${ic('gift')}<div><b>Bring a buddy</b><div style="font-size:13px;color:var(--sage-l)">You both get a free month of Plus.</div></div></div><button class="btn cream sm" style="margin-top:12px" data-a="sheet" data-v="buddy">Invite a friend</button></div>
+ <div class="box"><div class="sec" style="margin:0 0 6px"><h3>My hikes</h3></div>${hk?S.reg.map(id=>{const h=HIKES.find(x=>x.id===id);return `<button class="row" style="background:#fff" data-a="hike" data-v="${id}"><div class="t"><b>${h.t}</b><div class="m">${h.d} · ${h.spot}</div></div>${ic('back').replace('<svg','<svg style="transform:rotate(180deg)"')}</button>`}).join(''):`<p class="muted" style="margin:0">None yet. Your first group hike is free.</p>`}</div></div>`}
+
+function vHikeSheet(h){const reg=S.reg.includes(h.id),first=!S.reg.length;const sp=spotBy(h.spot);
+ return `<div class="grab"></div><div class="in"><div style="height:140px;border-radius:18px;overflow:hidden;margin-bottom:14px">${scene(h.pal,h.day*5,false)}</div><span class="eyebrow">${h.d} · ${h.time}</span><h2 class="h1" style="margin:4px 0 8px;font-size:24px">${h.t}</h2>
+ <div class="meta"><span>${ic('pin')}${h.spot}</span><span>${ic('mountain')}${h.diff} · ${h.km} km</span><span>${ic('users')}${h.cap-h.left} of ${h.cap} going</span></div>
+ <div class="leader">${ic('shield')}<div><b>First-aid certified hike leader</b><div class="muted" style="font-size:13px">A group of up to ${h.cap}, so nobody is alone with a stranger.</div></div></div>
+ <div class="box" style="margin-bottom:12px"><div style="font-size:14px;line-height:1.7"><b>Meet:</b> ${h.meet}<br><b>Drive from city:</b> ${sp.drive}<br><b>Park access:</b> ${sp.fee}<br><b>Snacks:</b> Included</div></div>
+ ${first&&!reg?`<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;color:var(--terra);font-weight:700">${ic('gift')} Your first group hike is free</div>`:''}
+ ${reg?`<button class="btn" data-a="sheet" data-v="buddy" style="margin-bottom:8px">${ic('gift')}Bring a buddy</button><button class="btn ghost" data-a="survey" data-v="${h.id}" style="margin-bottom:8px">Preview post-hike survey</button><button class="btn ghost" data-a="unreg" data-v="${h.id}" style="border-color:var(--line);color:var(--muted)">Cancel registration</button>`:`<button class="btn terra" data-a="reg" data-v="${h.id}">Register${first?' · Free':''}</button>`}</div>`}
+function vSheet(){const t=U.sheet;if(!t)return '';
+ if(t==='plus')return `<div class="scrim" data-a="close"></div><div class="sheet"><div class="grab"></div><div class="in"><div style="text-align:center">${heart(54)}<h2 class="h1" style="margin:8px 0 4px">Kinova Plus</h2><div class="price">$10<small> / month</small></div><div class="muted" style="margin-bottom:4px">First month free. Cancel anytime.</div></div>
+ <ul class="perks"><li>${ic('spark')}<span>Trail Guide plans the whole hike date</span></li><li>${ic('mountain')}<span>Weekend trips to Orford, Tremblant and more</span></li><li>${ic('heart')}<span>Premium matching on trails and Strava stats</span></li><li>${ic('cal')}<span>Next month's hikes, before everyone else</span></li><li>${ic('gift')}<span>Bring a buddy: you both get a free month</span></li></ul>
+ ${S.plus?`<button class="btn ghost" data-a="plusoff">Cancel Plus</button>`:`<button class="btn terra" data-a="plus">Start free month</button>`}<div class="note" style="padding-top:10px">Demo only. Nothing is charged.</div></div></div>`;
+ if(t==='buddy')return `<div class="scrim" data-a="close"></div><div class="sheet"><div class="grab"></div><div class="in" style="text-align:center">${ic('gift').replace('class="i"','class="i" style="width:40px;height:40px;color:var(--terra)"')}<h2 class="h1" style="margin:10px 0 6px">Bring a buddy</h2><p class="muted" style="margin:0 0 16px">Invite a friend to a group hike. You both get a free month of Plus.</p>
+ <div class="box" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b id="lk">kinova.app/join/${esc((S.name||'friend').toLowerCase().replace(/[^a-z]/g,''))}</b><button class="btn sm" data-a="copy">${ic('copy')}Copy</button></div><button class="btn" data-a="strshare">Share the hike on Strava</button></div></div>`;
+ if(t==='settings')return `<div class="scrim" data-a="close"></div><div class="sheet"><div class="grab"></div><div class="in"><h2 class="h1" style="margin-bottom:14px">Demo controls</h2><button class="btn ghost" data-a="reset" style="margin-bottom:8px">Reset demo and start over</button><button class="btn ghost" data-a="close">Close</button></div></div>`;
+ if(t.startsWith('hike:'))return `<div class="scrim" data-a="close"></div><div class="sheet">${vHikeSheet(HIKES.find(x=>x.id===t.slice(5)))}</div>`;
+ if(t.startsWith('prof:')){const p=PEOPLE.find(x=>x.id===t.slice(5)),sh=shared(p);return `<div class="scrim" data-a="close"></div><div class="sheet"><div style="height:220px;position:relative">${scene(p.pal,p.id.length*7+p.age)}</div><div class="in" style="padding-top:14px"><div style="display:flex;justify-content:space-between;align-items:center"><h2 class="h1">${p.n}, ${p.age}</h2><span class="chip s sh">${compat(p)}% match</span></div><div class="muted" style="margin:2px 0 12px">${p.job} · ${p.area}</div><p class="serif" style="font-size:22px;line-height:1.2;margin:0 0 16px">“${p.q}”</p>
+ <div class="box"><div class="eyebrow" style="margin-bottom:8px">Trail stats this year</div><div class="big3"><div><b>${p.s.h}</b><span>Hikes</span></div><div><b>${p.s.km}</b><span>km</span></div><div><b>${p.s.up}k</b><span>m up</span></div></div></div>
+ <div class="box"><div class="eyebrow" style="margin-bottom:8px">Loves</div><div class="chips">${p.acts.map(a=>`<span class="chip s ${sh.acts.includes(a)?'sh':''}">${a}</span>`).join('')}</div><div class="eyebrow" style="margin:14px 0 8px">Favourite trails</div><div class="chips">${p.spots.map(a=>`<span class="chip s ${sh.spots.includes(a)?'sh':''}">${a}</span>`).join('')}</div></div>
+ ${S.matches[p.id]?`<button class="btn" data-a="chat" data-v="${p.id}">Message ${p.n}</button>`:`<div style="display:flex;gap:10px"><button class="btn ghost" data-a="pass2" data-v="${p.id}">Pass</button><button class="btn terra" data-a="like2" data-v="${p.id}">Like</button></div>`}</div></div>`}
+ if(t.startsWith('survey:')){const h=HIKES.find(x=>x.id===t.slice(7));const sv=U.survey||{r:0,m:null};
+ return `<div class="scrim" data-a="close"></div><div class="sheet"><div class="grab"></div><div class="in"><span class="eyebrow">After the hike</span><h2 class="h1" style="margin:4px 0 4px;font-size:24px">How was ${h.t.toLowerCase()}?</h2><div class="stars">${[1,2,3,4,5].map(i=>`<button class="${sv.r>=i?'on':''}" data-a="star" data-v="${i}" aria-label="${i} stars">${ic('star')}</button>`).join('')}</div>
+ <b>Did you meet someone new?</b><div class="chips" style="margin:8px 0 16px">${['Yes, a match','Made a friend','Not this time'].map(x=>`<button class="chip ${sv.m===x?'on':''}" data-a="met" data-v="${x}">${x}</button>`).join('')}</div>
+ <button class="btn" data-a="sendsurvey" ${sv.r?'':'disabled'} style="margin-bottom:8px">Send feedback</button><button class="btn ghost" data-a="strshare">Share on Strava</button></div></div>`}
+ return ''}
+
+function vModal(){const p=PEOPLE.find(x=>x.id===U.match);if(!p)return '';const sh=shared(p),sp=sh.spots[0]||p.spots[0];
+ return `<div class="modal"><h2>It's a match</h2><div style="color:var(--sage-l)">You and ${p.n} both love ${esc(sp)}</div><div class="pair"><span class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#829c79"/><circle cx="50" cy="40" r="19" fill="#e8e2d2"/><path d="M12 100C12 68 30 58 50 58S88 68 88 100Z" fill="#e8e2d2"/></svg></span>${avatar(p)}</div>
+ <div style="width:100%;margin-top:6px"><button class="btn cream" data-a="chat" data-v="${p.id}">Say hi</button><button class="btn" style="background:transparent;color:var(--cream);margin-top:6px" data-a="matchguide" data-v="${p.id}">${ic('spark')}Ask the Trail Guide for a trail</button><button class="btn" style="background:transparent;color:var(--sage-l);margin-top:2px;font-size:14px" data-a="closematch">Keep exploring</button></div></div>`}
+
+/* ---------- render ---------- */
+function render(keep){const a=$('#app');let h='';
+ if(S.step==='splash')h=vSplash();else if(S.step==='welcome')h=vWelcome();else if(S.step==='onb'){h=vOnb()}
+ else{
+  const v={discover:vDiscover,hikes:vHikes,matches:vMatches,guide:vGuide,profile:vProfile}[S.tab]();
+  const unread=Object.keys(S.unread).filter(k=>S.unread[k]).length;
+  h=`<div class="status"><span>9:41</span><span>5G ▮▮▮</span></div><div class="screen" id="scr">${v}</div><nav class="tabbar">${[['discover','compass','Discover'],['hikes','mountain','Hikes'],['guide','spark','Guide'],['matches','chat','Matches'],['profile','user','Profile']].map(([k,i,l])=>k==='guide'?`<button class="guide ${S.tab===k?'on':''}" data-a="tab" data-v="${k}"><span class="o">${ic(i)}</span><span>${l}</span></button>`:`<button class="${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${ic(i)}<span>${l}</span>${k==='matches'&&unread?`<i class="badge">${unread}</i>`:''}</button>`).join('')}</nav>`;
+  h+=(U.chat?vChat():'')+vSheet()+(U.match?vModal():'');
+ }
+ if(S.step==='onb'||S.step==='welcome'||S.step==='splash'){if(S.step==='onb')h=`<div class="status"><span>9:41</span><span>5G ▮▮▮</span></div><div class="screen" id="scr">${h}</div>`}
+ if(U.toast)h+=`<div class="toast">${esc(U.toast)}</div>`;
+ const sc=$('#scr'),st=sc?sc.scrollTop:0,ci=$('#ci'),cv=ci&&ci.value;const gi=$('#gi'),gv=gi&&gi.value;
+ a.innerHTML=h;a.className='app'+(S.step==='splash'||S.step==='welcome'?' dark':'');
+ const n=$('#scr');if(n&&keep)n.scrollTop=st;const m=$('#msgs');if(m)m.scrollTop=m.scrollHeight;const g=$('#gm');if(g)g.scrollTop=g.scrollHeight;
+ const ci2=$('#ci');if(ci2&&cv){ci2.value=cv;}const gi2=$('#gi');if(gi2&&gv)gi2.value=gv;
+ bindDrag();save()}
+
+/* ---------- actions ---------- */
+function setTab(t){S.tab=t;U.chat=null;U.sheet=null;render()}
+function like(id,viaCard){const p=PEOPLE.find(x=>x.id===id);S.liked.push(id);S.idx=Math.min(S.idx+ (viaCard?1:0),queue().length);
+ if(!viaCard){const q=queue();const i=q.findIndex(x=>x.id===id);if(i===S.idx)S.idx++}
+ if(p.likes&&!S.matches[id]){S.matches[id]=[{t:`Hey ${S.name||''}! I saw we both love ${shared(p).spots[0]||p.spots[0]}. Have you been recently?`,me:0}];S.unread[id]=1;U.match=id;U.sheet=null}render()}
+function pass(id){S.passed.push(id);const q=queue();const i=q.findIndex(x=>x.id===id);if(i===S.idx)S.idx++;U.sheet=null;render()}
+function fling(dir,cb){const c=$('#top');if(!c){cb();return}c.style.transition='transform .28s ease-out,opacity .28s';c.style.transform=`translateX(${dir*500}px) rotate(${dir*25}deg)`;c.style.opacity='0';setTimeout(cb,260)}
+function bindDrag(){const c=$('#top');if(!c)return;let sx=0,dx=0,on=false;const L=c.querySelector('.stamp.l'),Pp=c.querySelector('.stamp.p');
+ c.onpointerdown=e=>{if(e.target.closest('button'))return;on=true;sx=e.clientX;dx=0;c.setPointerCapture(e.pointerId);c.style.transition='none'};
+ c.onpointermove=e=>{if(!on)return;dx=e.clientX-sx;c.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`;L.style.opacity=Math.max(0,dx/100);Pp.style.opacity=Math.max(0,-dx/100)};
+ c.onpointerup=c.onpointercancel=e=>{if(!on)return;on=false;if(Math.abs(dx)>90){const id=c.dataset.id;fling(dx>0?1:-1,()=>dx>0?like(id,1):pass(id))}else{c.style.transition='transform .2s';c.style.transform='';L.style.opacity=Pp.style.opacity=0}}}
+function addMsg(id,m){S.matches[id].push(m);const el=$('#msgs');if(el){el.insertAdjacentHTML('beforeend',msg(m));el.scrollTop=el.scrollHeight}save()}
+function reply(id,txt){const p=PEOPLE.find(x=>x.id===id);const el=$('#msgs');let t=null;if(el){el.insertAdjacentHTML('beforeend','<div class="msg them typing" id="ty"><i></i><i></i><i></i></div>');el.scrollTop=el.scrollHeight}
+ const T=txt.toLowerCase();let r;
+ if(/group|hike\b.*launch|invite/.test(T)&&txt!==''&&txt.startsWith('hikeCard'))r='Love that. A group hike takes the pressure off. Count me in!';
+ else if(/weekend|saturday|sunday|this/.test(T))r=`Saturday morning works for me! Want to start with the group hike so it's relaxed?`;
+ else if(/plan|trail|guide/.test(T))r='Ooh a plan, I like that. Send it over!';
+ else if(/strava|stats/.test(T))r='Yes! I\'ll follow you. Segment rivals incoming.';
+ else r=['Haha, love that. What\'s your favourite trail so far?','Sounds great! Do you prefer sunrise or sunset hikes?','Same here. I\'m always up for the next trail.'][S.matches[id].length%3];
+ setTimeout(()=>{const ty=$('#ty');if(ty)ty.remove();if(S.matches[id]){addMsg(id,{t:r,me:0})}},1300)}
+function sendChat(txt){const id=U.chat;if(!txt.trim())return;addMsg(id,{t:txt,me:1});reply(id,txt)}
+function guideAsk(q,ctx){S.guide=S.guide||{ctx:ctx||null,m:[]};if(ctx!==undefined&&ctx!==null)S.guide.ctx=ctx;const ctxP=S.guide.ctx?PEOPLE.find(x=>x.id===S.guide.ctx):null;
+ S.guide.m.push({t:q,me:1});S.guide.typing=1;render();
+ setTimeout(()=>{const r=guideReply(q,ctxP);S.guide.typing=0;S.guide.m.push({t:r.t,h:r.h});render()},900)}
+
+document.addEventListener('submit',e=>{e.preventDefault();const a=e.target.dataset.a;
+ if(a==='send'){const i=$('#ci');sendChat(i.value);i.value=''}
+ if(a==='gsend'){const i=$('#gi');if(i.value.trim()){const v=i.value;i.value='';guideAsk(v)}}});
+document.addEventListener('input',e=>{if(e.target.id==='nm')S.name=e.target.value;if(e.target.id==='ag')S.age=e.target.value.replace(/\D/g,'');
+ const b=$('[data-a=obnext]');if(b&&S.step==='onb'&&S.ob===0)b.disabled=!S.name.trim()});
+document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el||el.tagName==='FORM')return;const a=el.dataset.a,v=el.dataset.v;
+ switch(a){
+  case'start':S.step='onb';S.ob=0;render();break;
+  case'skip':Object.assign(S,{step:'app',name:S.name||'Alex',age:S.age||'30',strava:true});S.tab='discover';render();break;
+  case'int':S.interest=v;render(1);break;
+  case'act':S.acts=S.acts.includes(v)?S.acts.filter(x=>x!==v):[...S.acts,v];render(1);break;
+  case'spot':S.spots=S.spots.includes(v)?S.spots.filter(x=>x!==v):[...S.spots,v];render(1);break;
+  case'obnext':if(S.ob<3){S.ob++;render()}else{S.step='app';S.tab='discover';S.idx=0;render()}break;
+  case'obback':S.ob--;render();break;
+  case'strava':if(U.busy)break;U.busy=true;render(1);setTimeout(()=>{U.busy=false;S.strava=true;render(1);toast('Strava connected')},1100);break;
+  case'tab':setTab(v);break;
+  case'like':{const c=$('#top');if(c)fling(1,()=>like(c.dataset.id,1));break}
+  case'pass':{const c=$('#top');if(c)fling(-1,()=>pass(c.dataset.id));break}
+  case'like2':U.sheet=null;like(v,0);break;
+  case'pass2':pass(v);break;
+  case'replay':S.idx=0;S.liked=[];render();break;
+  case'profile':U.sheet='prof:'+v;render();break;
+  case'sheet':U.sheet=v;render(1);break;
+  case'close':U.sheet=null;render(1);break;
+  case'filter':S.filter=v;render();break;
+  case'notify':S.notify=!S.notify;render(1);toast(S.notify?'We\'ll notify you when July hikes go out':'Notifications off');break;
+  case'hike':U.sheet='hike:'+v;render(1);break;
+  case'reg':if(!S.reg.includes(v))S.reg.push(v);render(1);toast('You\'re in. Reminder set.');break;
+  case'unreg':S.reg=S.reg.filter(x=>x!==v);U.sheet=null;render(1);break;
+  case'survey':U.survey={r:0,m:null};U.sheet='survey:'+v;render(1);break;
+  case'star':U.survey.r=+v;render(1);break;
+  case'met':U.survey.m=v;render(1);break;
+  case'sendsurvey':U.sheet=null;render(1);toast('Thanks! Your feedback helps us plan better hikes.');break;
+  case'plus':S.plus=true;U.sheet=null;render(1);toast('Kinova Plus is on. First month free.');break;
+  case'plusoff':S.plus=false;U.sheet=null;render(1);break;
+  case'copy':try{navigator.clipboard.writeText($('#lk').textContent).then(()=>toast('Link copied'),()=>toast('Press and hold the link to copy'))}catch(x){toast('Press and hold the link to copy')};break;
+  case'strshare':U.sheet=null;toast('Shared to Strava');break;
+  case'reset':try{localStorage.removeItem(KEY)}catch(x){};S=base();S.step='welcome';U={sheet:null,chat:null,toast:null,match:null,survey:null,busy:false};render();break;
+  case'chat':if(!S.matches[v])break;U.chat=v;U.sheet=null;U.match=null;S.tab='matches';S.unread[v]=0;render();break;
+  case'chatback':U.chat=null;render();break;
+  case'closematch':U.match=null;render();break;
+  case'matchguide':{const id=v;U.match=null;U.chat=null;S.tab='guide';S.guide={ctx:id,m:[]};render();break}
+  case'q':{const id=U.chat;
+   if(v==='hike')sendChat('Want to hike together this weekend?');
+   if(v==='group'){addMsg(id,{t:'',me:1,hike:'h1'});addMsg(id,{t:'Want to join this group hike with me?',me:1});reply(id,'group')}
+   if(v==='guide'){S.guide={ctx:id,m:[]};U.chat=null;S.tab='guide';render()}
+   if(v==='date'){if(!S.plus){U.sheet='plus';render(1)}else{S.guide={ctx:id,m:[]};U.chat=null;S.tab='guide';render();guideAsk('Plan the hike date',id)}}
+   break}
+  case'gq':{const ctx=S.guide&&S.guide.ctx;guideAsk(v,ctx||undefined);break}
+  case'sendplan':{const id=S.guide.ctx;if(id&&S.matches[id]){addMsg(id,{t:'Trail Guide made us a plan for Saturday. Interested?',me:1});toast('Plan sent')}break}
+ }});
+
+/* ---------- boot ---------- */
+function fit(){const p=$('#phone');if(window.innerWidth<760){p.style.transform='';return}const s=Math.min(1,(window.innerHeight-48)/844);p.style.transform=`scale(${s})`}
+addEventListener('resize',fit);fit();
+$('#pl').innerHTML=wordmark(34);
+try{new QRCode($('#qr'),{text:'https://claude.ai/artifact/9j2HbS9h3P32NBv5yXxBWQ',width:150,height:150,colorDark:'#1e2b24',colorLight:'#e8e2d2'})}catch(e){$('#qr').parentNode.style.display='none'}
+render();
+if(S.step==='splash')setTimeout(()=>{if(S.step==='splash'){S.step='welcome';render()}},1700);
+</script>
+
+</body></html>
