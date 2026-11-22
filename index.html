@@ -245,6 +245,39 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
 .pc b{display:block;padding:10px 12px 0;font-size:16px}
 .pc .lab{display:block;padding:2px 12px 0;font-size:12.5px;color:var(--terra);font-weight:600}
 .av img{width:100%;height:100%;object-fit:cover;object-position:50% 25%;display:block}
+.app.dark .status{color:var(--cream)}
+.status{position:relative;z-index:3}
+.home{position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0%,#2a4538 0%,#16241d 55%,#0d1612 100%);padding:70px 22px 22px;display:flex;flex-direction:column}
+.hgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px 16px;align-content:start}
+.gi{display:block;width:100%;aspect-ratio:1;border-radius:16px;background:rgba(232,226,210,.12)}
+.kicon{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--cream);font-size:11.5px}
+.kicon span{display:grid;place-items:center;width:100%;aspect-ratio:1;border-radius:16px;background:linear-gradient(145deg,#3d6450,#2e4e3c);box-shadow:0 0 0 1px rgba(232,226,210,.25),0 0 22px rgba(130,156,121,.55);animation:glow 1.8s ease-in-out infinite}
+.kicon em{font-style:normal}
+@keyframes glow{50%{box-shadow:0 0 0 1px rgba(232,226,210,.4),0 0 34px rgba(130,156,121,.9);transform:scale(1.05)}}
+.hhint{margin:auto 0 18px;text-align:center;color:var(--sage-l);font-size:14px;letter-spacing:.04em}
+.dock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding:14px;border-radius:26px;background:rgba(232,226,210,.1)}
+.intro{position:absolute;inset:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--forest);color:var(--cream);animation:reveal .7s ease-out both;z-index:1}
+@keyframes reveal{from{clip-path:circle(0 at 38% 68%)}to{clip-path:circle(150% at 38% 68%)}}
+.ilogo{display:flex;align-items:center;justify-content:center}
+.iw{font-family:var(--f-logo);font-weight:300;letter-spacing:.08em;font-size:44px;opacity:0}
+.iw.l{animation:slideL .7s .95s ease-out both}
+.iw.r{animation:slideR .7s .95s ease-out both}
+@keyframes slideL{from{opacity:0;transform:translateX(34px)}to{opacity:1;transform:none}}
+@keyframes slideR{from{opacity:0;transform:translateX(-34px)}to{opacity:1;transform:none}}
+.hdraw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1s .5s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.hfill{opacity:0;animation:fadein .5s 1.1s forwards}
+@keyframes fadein{to{opacity:1}}
+.mtn{transform:translateY(26px);opacity:0;animation:rise .6s 1.4s ease-out forwards}
+@keyframes rise{to{transform:none;opacity:1}}
+.itag{margin-top:22px;font-family:var(--f-serif);font-style:italic;font-size:21px;color:var(--sage-l);opacity:0;animation:fadeup .7s 2s ease-out forwards}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.intro,.intro *,.kicon span{animation:none!important;opacity:1!important;stroke-dashoffset:0!important;transform:none!important}}
+.lhead{padding:26px 24px 30px;text-align:center;color:var(--cream)}
+.lhead .tg{font-family:var(--f-serif);font-style:italic;font-size:19px;color:var(--sage-l);margin-top:10px}
+.lcard{flex:1;background:var(--pale);border-radius:28px 28px 0 0;padding:22px 22px 28px;color:var(--ink)}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:14px 0}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
 .note{font-size:11.5px;color:var(--muted);text-align:center;padding:4px 20px 14px}
 </style>
 
@@ -285,6 +318,11 @@ function heart(sz){return `<svg viewBox="0 0 100 94" width="${sz}" height="${sz*
 <path d="M50 86 L14 50 C1 37 3 18 17 11 C30 5 44 10 50 22 C56 10 70 5 83 11 C97 18 99 37 86 50 Z" fill="#829c79"/>
 <g clip-path="url(#hc${sz})"><path d="M18 72 L41 53 L47 62 L52 67 L58 57 L64 47 L72 62 L84 72 L50 94 Z" fill="#1e2b24"/><path d="M41 53 L37 60 L45 57Z M64 47 L59 57 L68 54Z" fill="#e8e2d2"/></g>
 <path d="M50 86 L14 50 C1 37 3 18 17 11 C30 5 44 10 50 22 C56 10 70 5 83 11 C97 18 99 37 86 50 Z" fill="none" stroke="#e8e2d2" stroke-width="7" stroke-linejoin="round"/></svg>`}
+function introHeart(sz){const D='M50 86 L14 50 C1 37 3 18 17 11 C30 5 44 10 50 22 C56 10 70 5 83 11 C97 18 99 37 86 50 Z';
+return `<svg viewBox="0 0 100 94" width="${sz}" height="${sz*.94}" style="margin:0 -2px;overflow:visible" aria-hidden="true"><defs><clipPath id="ihc"><path d="${D}"/></clipPath></defs><path class="hfill" d="${D}" fill="#829c79"/><g clip-path="url(#ihc)"><g class="mtn"><path d="M18 72 L41 53 L47 62 L52 67 L58 57 L64 47 L72 62 L84 72 L50 94 Z" fill="#1e2b24"/><path d="M41 53 L37 60 L45 57Z M64 47 L59 57 L68 54Z" fill="#e8e2d2"/></g></g><path class="hdraw" pathLength="1" d="${D}" fill="none" stroke="#e8e2d2" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/></svg>`}
+let AC=null;
+function chime(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();const t=AC.currentTime+.02;
+ [[329.63,0,.10],[659.25,.05,.16],[880,.2,.16],[1108.7,.36,.14],[1318.5,.52,.16]].forEach(([f,d,v])=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t+d);g.gain.linearRampToValueAtTime(v,t+d+.03);g.gain.exponentialRampToValueAtTime(.001,t+d+1.3);o.connect(g);g.connect(AC.destination);o.start(t+d);o.stop(t+d+1.4)})}catch(e){}}
 function wordmark(h){return `<span class="wm" style="font-size:${h}px">KIN${heart(h*.95)}VA</span>`}
 
 const PAL=[['#f6c28b','#d98a5f','#6b8f71','#3b5e49','#223a2d'],['#bcd9e8','#8fb7c9','#7fa08a','#4a7360','#2a4a3a'],['#f2d7a8','#cfa173','#8b9e72','#566f4d','#2e4a38'],['#c8d9d2','#9fb8b0','#6f8f7f','#44655a','#27423a'],['#f0b9a0','#c98a82','#8f8a86','#5c6b66','#34453f'],['#d4e0b8','#a9c08a','#7a9a68','#4c7050','#2b4a37']];
@@ -314,10 +352,10 @@ function spotImg(n){const k=SPOTKEY[n];return k&&PHOTOS[k]?`<img src="${PHOTOS[k
 function imgTag(id,cls){return PHOTOS[id]?`<img ${cls?'class="'+cls+'" ':''}src="${PHOTOS[id]}" alt="">`:''}
 const spotBy=n=>SPOTS.find(s=>s.n===n);
 const PEOPLE=[
- {id:'coralie',n:'Coralie',age:20,g:'w',area:'Greater Montréal',job:'The Veteran',acts:['Hiking','Snowshoeing','Camping','Strava'],spots:['Mont Saint-Bruno','Mont-Royal'],s:{h:100,km:1250,up:38},q:'100 hikes in and the trail still surprises me.',d:'Coralie has done more hikes than most people have taken weekends off. She knows Mont Saint-Bruno by heart, hikes through snow without complaining, and is looking for someone who can keep up and still enjoy the quiet.',likes:1,pal:3,first:1},
- {id:'alessandro',n:'Alessandro',age:20,g:'m',area:'Greater Montréal',job:'King of the Hill',acts:['Hiking','Trail running','Photography','Strava'],spots:['Mont-Royal','Mont Saint-Hilaire'],s:{h:61,km:780,up:24},q:'If there is a hill in Montréal, I have already been to the top of it. Twice.',d:'Alessandro chases summits, not swipes. He wants someone who will race him up Mont-Royal and then sit still with him for the view.',likes:1,pal:0,first:1},
- {id:'jacob',n:'Jacob',age:20,g:'m',area:'Greater Montréal',job:'The Nature Talker',acts:['Hiking','Photography','Kayaking','Strava'],spots:['Mont Orford','Mont Saint-Bruno'],s:{h:44,km:530,up:17},q:'Ask me about any plant on the trail. Seriously, ask.',d:'Jacob cannot walk past a waterfall, a fern or a strange mushroom without telling you about it. He is happiest on a long trail with someone who asks questions back.',likes:1,pal:5,first:1},
- {id:'antoine',n:'Antoine',age:20,g:'m',area:'Greater Montréal',job:'The Explorer',acts:['Hiking','Skiing','Camping','Mountain biking'],spots:['Mont-Tremblant','Mont Orford'],s:{h:47,km:612,up:18.4},q:'Any excuse to be outside. Next stop: Tremblant.',d:'Antoine will take any excuse to be outside. He loves the big views of Mont-Tremblant and is always planning the next trip.',likes:1,pal:1,first:1},
+ {id:'coralie',ord:3,n:'Coralie',age:20,g:'w',area:'Greater Montréal',job:'The Veteran',acts:['Hiking','Snowshoeing','Camping','Strava'],spots:['Mont Saint-Bruno','Mont-Royal'],s:{h:100,km:1250,up:38},q:'100 hikes in and the trail still surprises me.',d:'Coralie has done more hikes than most people have taken weekends off. She knows Mont Saint-Bruno by heart, hikes through snow without complaining, and is looking for someone who can keep up and still enjoy the quiet.',likes:1,pal:3,first:1},
+ {id:'alessandro',ord:1,n:'Alessandro',age:20,g:'m',area:'Greater Montréal',job:'King of the Hill',acts:['Hiking','Trail running','Photography','Strava'],spots:['Mont-Royal','Mont Saint-Hilaire'],s:{h:61,km:780,up:24},q:'If there is a hill in Montréal, I have already been to the top of it. Twice.',d:'Alessandro chases summits, not swipes. He wants someone who will race him up Mont-Royal and then sit still with him for the view.',likes:1,pal:0,first:1},
+ {id:'jacob',ord:2,n:'Jacob',age:20,g:'m',area:'Greater Montréal',job:'The Nature Talker',acts:['Hiking','Photography','Kayaking','Strava'],spots:['Mont Orford','Mont Saint-Bruno'],s:{h:44,km:530,up:17},q:'Ask me about any plant on the trail. Seriously, ask.',d:'Jacob cannot walk past a waterfall, a fern or a strange mushroom without telling you about it. He is happiest on a long trail with someone who asks questions back.',likes:1,pal:5,first:1},
+ {id:'antoine',ord:4,n:'Antoine',age:20,g:'m',area:'Greater Montréal',job:'The Explorer',acts:['Hiking','Skiing','Camping','Mountain biking'],spots:['Mont-Tremblant','Mont Orford'],s:{h:47,km:612,up:18.4},q:'Any excuse to be outside. Next stop: Tremblant.',d:'Antoine will take any excuse to be outside. He loves the big views of Mont-Tremblant and is always planning the next trip.',likes:1,pal:1,first:1},
  {id:'camille',n:'Camille',age:29,g:'w',area:'Rosemont',job:'Nurse · Sunrise chaser',acts:['Hiking','Camping','Climbing','Photography'],spots:['Mont Saint-Bruno','Mont Saint-Hilaire','Parc d\'Oka'],s:{h:52,km:640,up:21},q:'I\'d rather meet someone at the top of a mountain than at the bottom of a pint.',likes:1,pal:0},
  {id:'lea',n:'Léa',age:27,g:'w',area:'Plateau',job:'Designer · Trail runner',acts:['Trail running','Hiking','Yoga','Local food'],spots:['Mont-Royal','Mont Saint-Bruno','Mont Orford'],s:{h:38,km:512,up:16},q:'Fast on the downhills, slow on the snack breaks.',likes:1,pal:1},
  {id:'sarah',n:'Sarah-Jade',age:31,g:'w',area:'Verdun',job:'Teacher · Weekend camper',acts:['Camping','Hiking','Kayaking','Photography'],spots:['Parc d\'Oka','Mont Orford','Mont-Tremblant'],s:{h:29,km:388,up:12},q:'Tent packed. Looking for a co-pilot for Tremblant.',likes:0,pal:2},
@@ -336,18 +374,34 @@ const HIKES=[
 
 /* ---------- state ---------- */
 const KEY='kinova_demo_v1';
-const base=()=>({step:'splash',ob:0,name:'',age:'',interest:'all',acts:['Hiking','Mountain biking','Camping'],spots:['Mont Saint-Bruno','Mont Orford'],strava:false,persona:null,stats:{h:47,km:612,up:18.4},plus:false,tab:'discover',idx:0,liked:[],passed:[],matches:{},unread:{},reg:[],notify:false,filter:'all',guide:null,doneSurvey:[]});
+const base=()=>({step:'home',ob:0,name:'',age:'',interest:'all',acts:['Hiking','Mountain biking','Camping'],spots:['Mont Saint-Bruno','Mont Orford'],strava:false,level:'Intermediate',persona:null,stats:{h:47,km:612,up:18.4},plus:false,tab:'discover',idx:0,liked:[],passed:[],matches:{},unread:{},reg:[],notify:false,filter:'all',guide:null,doneSurvey:[]});
 let S=base();
-try{const r=localStorage.getItem(KEY);if(r){S=Object.assign(base(),JSON.parse(r));if(S.step==='splash'||S.step==='persona')S.step='welcome'}}catch(e){}
+try{const r=localStorage.getItem(KEY);if(r){S=Object.assign(base(),JSON.parse(r));}}catch(e){}
+const RESUME=S.step==='app';S.step='home';
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 let U={sheet:null,chat:null,toast:null,match:null,survey:null,busy:false};
 const me=()=>({n:S.name||'You'});
 function compat(p){const a=p.acts.filter(x=>S.acts.includes(x)).length,s=p.spots.filter(x=>S.spots.includes(x)).length;return Math.min(98,62+a*7+s*9)}
 const shared=p=>({acts:p.acts.filter(x=>S.acts.includes(x)),spots:p.spots.filter(x=>S.spots.includes(x))});
-function queue(){let l=PEOPLE.filter(p=>S.interest==='all'||p.g===S.interest);l=l.sort((a,b)=>((b.first||0)-(a.first||0))||(b.likes-a.likes)||(compat(b)-compat(a))).slice(0,6);return l}
+function queue(){let l=PEOPLE.filter(p=>S.interest==='all'||p.g===S.interest);l=l.sort((a,b)=>((a.ord||99)-(b.ord||99))||(b.likes-a.likes)||(compat(b)-compat(a))).slice(0,6);return l}
 function toast(t){U.toast=t;render();clearTimeout(toast.t);toast.t=setTimeout(()=>{U.toast=null;render()},2200)}
 
 /* ---------- views ---------- */
+function vHome(){const gh=n=>Array.from({length:n},()=>'<i class="gi"></i>').join('');
+return `<div class="status"><span>9:41</span><span>5G ▮▮▮</span></div><div class="home"><div class="hgrid">${gh(12)}<button class="kicon" data-a="open" aria-label="Open Kinova"><span>${heart(38)}</span><em>Kinova</em></button>${gh(7)}</div><p class="hhint">Tap Kinova to open</p><div class="dock"><i class="gi"></i><i class="gi"></i><i class="gi"></i><i class="gi"></i></div></div>`}
+function vIntro(){return `<div class="status"><span>9:41</span><span>5G ▮▮▮</span></div><button class="intro" data-a="introskip" aria-label="Skip intro"><div class="ilogo"><span class="iw l">KIN</span>${introHeart(92)}<span class="iw r">VA</span></div><div class="itag">New people, found on the trail.</div></button>`}
+function vLogin(){const su=U.mode==='signup';
+return `<div style="min-height:100%;display:flex;flex-direction:column"><div class="lhead">${wordmark(30)}<div class="tg">Swipe less. Hike more.</div></div>
+<div class="lcard fade"><div class="seg" style="margin-bottom:18px"><button data-a="mode" data-v="login" class="${su?'':'on'}">Log in</button><button data-a="mode" data-v="signup" class="${su?'on':''}">Sign up</button></div>
+${su?`<div class="field"><label for="lnm">First name</label><input id="lnm" placeholder="Your first name" autocomplete="off"></div>`:''}
+<div class="field"><label for="lem">Email</label><input id="lem" type="email" placeholder="you@email.com" autocomplete="off"></div>
+<div class="field"><label for="lpw">Password</label><input id="lpw" type="password" placeholder="Your password" autocomplete="off"></div>
+${su?'':`<div style="text-align:right;margin:-6px 0 14px"><button class="link" style="font-size:13px" data-a="forgot">Forgot password?</button></div>`}
+<button class="btn" data-a="login">${su?'Create account':'Log in'}</button>
+<div class="or">or</div>
+<button class="btn ghost" data-a="login" style="margin-bottom:8px">Continue with Google</button><button class="btn ghost" data-a="login">Continue with Apple</button>
+<div class="note" style="padding:14px 0 0">Demo only. Nothing you type here is saved.</div>
+<div style="text-align:center;margin-top:6px"><button class="link" style="font-size:14px" data-a="skip">Skip, explore the demo</button></div></div></div>`}
 function vSplash(){return `<div class="dark welcome" style="justify-content:center;gap:20px"><div class="pulse">${heart(110)}</div>${wordmark(30)}</div>`}
 function vWelcome(){return `<div class="dark welcome"><div></div><div class="fade">${wordmark(40)}<div class="tag">kin (your people) + nova (new)</div><p style="color:var(--cream);font-size:19px;margin:24px 0 0">New people, found on the trail.</p></div>
 <div class="fade"><div style="display:flex;justify-content:center;gap:8px;margin-bottom:18px;color:var(--sage-l);font-size:13px"><span>Match outdoors</span>·<span>Meet outdoors</span></div>
@@ -357,18 +411,16 @@ function vPersona(){return `<div class="pad fade" style="padding-top:12px"><div 
 <div class="pgrid">${PERSONAS.map(p=>`<button class="pc" data-a="persona" data-v="${p.id}"><span class="pph">${imgTag(p.id)}</span><b>${p.n}, ${p.age}</b><span class="lab">${p.label}</span></button>`).join('')}</div>
 <button class="btn ghost" style="margin-top:16px" data-a="own">Create my own profile</button></div>`}
 function vOnb(){const st=S.ob;let body='',ok=true,title='',sub='';
- if(st===0){title='Let\'s build your trail profile';sub='Just the basics.';ok=S.name.trim().length>0;
-  body=`<div class="field"><label for="nm">First name</label><input id="nm" value="${esc(S.name)}" placeholder="Your first name" autocomplete="off"></div>
-  <div class="field"><label for="ag">Age</label><input id="ag" value="${esc(S.age)}" inputmode="numeric" maxlength="2" placeholder="29" autocomplete="off"></div>
-  <div class="field"><label>I want to meet</label><div class="seg">${[['w','Women'],['m','Men'],['all','Everyone']].map(([k,l])=>`<button data-a="int" data-v="${k}" class="${S.interest===k?'on':''}">${l}</button>`).join('')}</div></div>`}
- if(st===1){title='What do you love doing outside?';sub='Pick as many as you like. Matches start here.';ok=S.acts.length>0;
+ if(st===0){title='What are your interests?';sub='Pick as many as you like. Matches start here.';ok=S.acts.length>0;
   body=`<div class="chips">${ACTS.map(a=>`<button class="chip ${S.acts.includes(a)?'on':''}" data-a="act" data-v="${a}">${a}</button>`).join('')}</div>`}
- if(st===2){title='Your favourite hiking spots';sub='All under two hours from Montréal.';ok=S.spots.length>0;
+ if(st===1){title='Your favourite hiking trails';sub='All under two hours from Montréal.';ok=S.spots.length>0;
   body=SPOTS.map(s=>`<button class="spot ${S.spots.includes(s.n)?'on':''}" data-a="spot" data-v="${esc(s.n)}"><span class="ph">${spotImg(s.n)||scene(s.pal,s.km*3,false)}</span><div><b>${s.n}</b><span>${s.a} · ${s.drive} · ${s.lvl}</span></div><i class="tick">${ic('check')}</i></button>`).join('')}
+ if(st===2){title='What is your hiking level?';sub='So we match you with people who hike like you.';ok=!!S.level;
+  body=[['Beginner','Easy trails, up to 5 km'],['Intermediate','Moderate hikes, 5 to 12 km'],['Advanced','Steep climbs, 12 km and more'],['Expert','Big summits and multi-day treks']].map(([k,d])=>`<button class="spot ${S.level===k?'on':''}" data-a="lvl" data-v="${k}"><div><b>${k}</b><span>${d}</span></div><i class="tick">${ic('check')}</i></button>`).join('')}
  if(st===3){title='Let your trails do the talking';sub='Connect Strava so your profile shows real hikes, not just photos.';
   body=`<div class="box" style="text-align:center"><div style="font-size:15px;font-weight:700;color:#fc4c02;margin-bottom:6px">STRAVA</div>${S.strava?`<div class="big3" style="text-align:center"><div><b>${S.stats.h}</b><span>Hikes</span></div><div><b>${S.stats.km} km</b><span>Distance</span></div><div><b>${S.stats.up}k m</b><span>Elevation</span></div></div><p class="muted" style="margin:14px 0 0">Connected. Shown on your profile.</p>`:`<p class="muted">Optional. You can add it later.</p><button class="btn" data-a="strava">${U.busy?'<span class="spin"></span>Connecting':'Connect Strava'}</button>`}</div>
   <div class="box"><b>First hikes happen in a group.</b><p class="muted" style="margin:6px 0 0">A safer, more natural first date, with other people around and a first-aid certified hike leader.</p></div>`}
- return `<div class="pad fade" style="padding-top:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">${st>0?`<button class="iconbtn" data-a="obback">${ic('back')}</button>`:'<span></span>'}<span class="eyebrow">Step ${st+1} of 4</span></div><div class="dots">${[0,1,2,3].map(i=>`<i class="${i<=st?'on':''}"></i>`).join('')}</div>
+ return `<div class="pad fade" style="padding-top:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><button class="iconbtn" data-a="obback" aria-label="Back">${ic('back')}</button><span class="eyebrow">Step ${st+1} of 4</span></div><div class="dots">${[0,1,2,3].map(i=>`<i class="${i<=st?'on':''}"></i>`).join('')}</div>
  <h1 class="h1" style="margin-bottom:6px">${title}</h1><p class="muted" style="margin:0 0 20px">${sub}</p>${body}
  <div style="height:14px"></div><button class="btn" data-a="obnext" ${ok?'':'disabled'}>${st===3?'Enter Kinova':'Continue'}</button></div>`}
 
@@ -439,7 +491,7 @@ function vProfile(){const hk=S.reg.length;
  <div class="pad" style="padding-top:18px">
  <div class="plus ${S.plus?'on':''}"><h3>${ic('bolt')} Kinova Plus</h3><p>${S.plus?'Active. Trail Guide plans your hike dates and weekend trips.':'$10 a month. First month free. Plan hike dates and weekend trips with the AI Trail Guide.'}</p>${S.plus?`<button class="btn cream sm" data-a="sheet" data-v="plus">Manage</button>`:`<button class="btn cream sm" data-a="sheet" data-v="plus">Start free month</button>`}</div>
  <div class="box"><div class="sec" style="margin:0"><h3>Strava</h3>${S.strava?'<span class="eyebrow" style="color:var(--forest)">Connected</span>':''}</div>${S.strava?`<div class="big3"><div><b>${S.stats.h}</b><span>Hikes</span></div><div><b>${S.stats.km}</b><span>km</span></div><div><b>${S.stats.up}k</b><span>m up</span></div></div>`:`<p class="muted" style="margin:6px 0 12px">Show real hikes on your profile.</p><button class="btn ghost sm" data-a="strava">${U.busy?'<span class="spin" style="border-color:rgba(46,78,60,.3);border-top-color:var(--forest)"></span>':'Connect Strava'}</button>`}</div>
- <div class="box"><h3 style="margin-bottom:10px">Loves</h3><div class="chips">${S.acts.map(a=>`<span class="chip s">${a}</span>`).join('')}</div><h3 style="margin:16px 0 10px">Favourite trails</h3><div class="chips">${S.spots.map(a=>`<span class="chip s">${a}</span>`).join('')}</div></div>
+ <div class="box"><h3 style="margin-bottom:10px">Loves</h3><div class="chips">${S.acts.map(a=>`<span class="chip s">${a}</span>`).join('')}</div><h3 style="margin:16px 0 10px">Favourite trails</h3><div class="chips">${S.spots.map(a=>`<span class="chip s">${a}</span>`).join('')}</div><h3 style="margin:16px 0 10px">Hiking level</h3><div class="chips"><span class="chip s">${S.level}</span></div></div>
  <div class="box" style="background:var(--forest);color:var(--cream)"><div style="display:flex;gap:10px;align-items:center">${ic('gift')}<div><b>Bring a buddy</b><div style="font-size:13px;color:var(--sage-l)">You both get a free month of Plus.</div></div></div><button class="btn cream sm" style="margin-top:12px" data-a="sheet" data-v="buddy">Invite a friend</button></div>
  <div class="box"><div class="sec" style="margin:0 0 6px"><h3>My hikes</h3></div>${hk?S.reg.map(id=>{const h=HIKES.find(x=>x.id===id);return `<button class="row" style="background:#fff" data-a="hike" data-v="${id}"><div class="t"><b>${h.t}</b><div class="m">${h.d} · ${h.spot}</div></div>${ic('back').replace('<svg','<svg style="transform:rotate(180deg)"')}</button>`}).join(''):`<p class="muted" style="margin:0">None yet. Your first group hike is free.</p>`}</div></div>`}
 
@@ -477,17 +529,17 @@ function vModal(){const p=PEOPLE.find(x=>x.id===U.match);if(!p)return '';const s
 
 /* ---------- render ---------- */
 function render(keep){const a=$('#app');let h='';
- if(S.step==='splash')h=vSplash();else if(S.step==='welcome')h=vWelcome();else if(S.step==='persona'){h=vPersona()}else if(S.step==='onb'){h=vOnb()}
+ if(S.step==='home')h=vHome();else if(S.step==='intro')h=vIntro();else if(S.step==='login')h=vLogin();else if(S.step==='splash')h=vSplash();else if(S.step==='welcome')h=vWelcome();else if(S.step==='persona'){h=vPersona()}else if(S.step==='onb'){h=vOnb()}
  else{
   const v={discover:vDiscover,hikes:vHikes,matches:vMatches,guide:vGuide,profile:vProfile}[S.tab]();
   const unread=Object.keys(S.unread).filter(k=>S.unread[k]).length;
   h=`<div class="status"><span>9:41</span><span>5G ▮▮▮</span></div><div class="screen" id="scr">${v}</div><nav class="tabbar">${[['discover','compass','Discover'],['hikes','mountain','Hikes'],['guide','spark','Guide'],['matches','chat','Matches'],['profile','user','Profile']].map(([k,i,l])=>k==='guide'?`<button class="guide ${S.tab===k?'on':''}" data-a="tab" data-v="${k}"><span class="o">${ic(i)}</span><span>${l}</span></button>`:`<button class="${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${ic(i)}<span>${l}</span>${k==='matches'&&unread?`<i class="badge">${unread}</i>`:''}</button>`).join('')}</nav>`;
   h+=(U.chat?vChat():'')+vSheet()+(U.match?vModal():'');
  }
- if(S.step==='onb'||S.step==='persona'||S.step==='welcome'||S.step==='splash'){if(S.step==='onb'||S.step==='persona')h=`<div class="status"><span>9:41</span><span>5G ▮▮▮</span></div><div class="screen" id="scr">${h}</div>`+(S.step==='persona'?vSheet():'')}
+ if(S.step==='onb'||S.step==='persona'||S.step==='login'||S.step==='home'||S.step==='intro'||S.step==='welcome'||S.step==='splash'){if(S.step==='onb'||S.step==='persona'||S.step==='login')h=`<div class="status"><span>9:41</span><span>5G ▮▮▮</span></div><div class="screen" id="scr">${h}</div>`+(S.step==='persona'?vSheet():'')}
  if(U.toast)h+=`<div class="toast">${esc(U.toast)}</div>`;
  const sc=$('#scr'),st=sc?sc.scrollTop:0,ci=$('#ci'),cv=ci&&ci.value;const gi=$('#gi'),gv=gi&&gi.value;
- a.innerHTML=h;a.className='app'+(S.step==='splash'||S.step==='welcome'?' dark':'');
+ a.innerHTML=h;a.className='app'+(['splash','welcome','home','intro','login'].includes(S.step)?' dark':'');
  const n=$('#scr');if(n&&keep)n.scrollTop=st;const m=$('#msgs');if(m)m.scrollTop=m.scrollHeight;const g=$('#gm');if(g)g.scrollTop=g.scrollHeight;
  const ci2=$('#ci');if(ci2&&cv){ci2.value=cv;}const gi2=$('#gi');if(gi2&&gv)gi2.value=gv;
  bindDrag();save()}
@@ -524,8 +576,14 @@ document.addEventListener('input',e=>{if(e.target.id==='nm')S.name=e.target.valu
  const b=$('[data-a=obnext]');if(b&&S.step==='onb'&&S.ob===0)b.disabled=!S.name.trim()});
 document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el||el.tagName==='FORM')return;const a=el.dataset.a,v=el.dataset.v;
  switch(a){
-  case'start':S.step='onb';S.ob=0;S.persona=null;render();break;
-  case'skip':Object.assign(S,{step:'app',persona:null,name:S.name||'Alex',age:S.age||'30',strava:true,stats:{h:47,km:612,up:18.4},idx:0});S.tab='discover';render();break;
+  case'start':S.step='login';render();break;
+  case'skip':Object.assign(S,{step:'app',persona:null,name:S.name||'Alex',age:S.age||'30',strava:true,level:S.level||'Intermediate',stats:{h:47,km:612,up:18.4},idx:0});S.tab='discover';render();break;
+  case'open':chime();S.step='intro';render();clearTimeout(U.ot);U.ot=setTimeout(()=>{if(S.step==='intro'){S.step=RESUME?'app':'login';render()}},3500);break;
+  case'introskip':S.step=RESUME?'app':'login';render();break;
+  case'mode':U.mode=v;render();break;
+  case'forgot':toast('Demo only. No account to recover.');break;
+  case'login':{const n=$('#lnm');if(n&&n.value.trim())S.name=n.value.trim();S.step='onb';S.ob=0;render();break}
+  case'lvl':S.level=v;render(1);break;
   case'own':S.step='onb';S.ob=0;S.persona=null;render();break;
   case'tobwelcome':S.step='welcome';render();break;
   case'persona':U.sheet='persona:'+v;render();break;
@@ -535,7 +593,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!
   case'act':S.acts=S.acts.includes(v)?S.acts.filter(x=>x!==v):[...S.acts,v];render(1);break;
   case'spot':S.spots=S.spots.includes(v)?S.spots.filter(x=>x!==v):[...S.spots,v];render(1);break;
   case'obnext':if(S.ob<3){S.ob++;render()}else{S.step='app';S.tab='discover';S.idx=0;render()}break;
-  case'obback':S.ob--;render();break;
+  case'obback':if(S.ob===0){S.step='login'}else{S.ob--}render();break;
   case'strava':if(U.busy)break;U.busy=true;render(1);setTimeout(()=>{U.busy=false;S.strava=true;render(1);toast('Strava connected')},1100);break;
   case'tab':setTab(v);break;
   case'like':{const c=$('#top');if(c)fling(1,()=>like(c.dataset.id,1));break}
@@ -559,7 +617,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!
   case'plusoff':S.plus=false;U.sheet=null;render(1);break;
   case'copy':try{navigator.clipboard.writeText($('#lk').textContent).then(()=>toast('Link copied'),()=>toast('Press and hold the link to copy'))}catch(x){toast('Press and hold the link to copy')};break;
   case'strshare':U.sheet=null;toast('Shared to Strava');break;
-  case'reset':try{localStorage.removeItem(KEY)}catch(x){};S=base();S.step='welcome';U={sheet:null,chat:null,toast:null,match:null,survey:null,busy:false};render();break;
+  case'reset':try{localStorage.removeItem(KEY)}catch(x){};S=base();S.step='home';U={sheet:null,chat:null,toast:null,match:null,survey:null,busy:false};render();break;
   case'chat':if(!S.matches[v])break;U.chat=v;U.sheet=null;U.match=null;S.tab='matches';S.unread[v]=0;render();break;
   case'chatback':U.chat=null;render();break;
   case'closematch':U.match=null;render();break;
@@ -580,7 +638,6 @@ addEventListener('resize',fit);fit();
 $('#pl').innerHTML=wordmark(34);
 try{new QRCode($('#qr'),{text:'https://alessbalti.github.io/kinova-demo/',width:150,height:150,colorDark:'#1e2b24',colorLight:'#e8e2d2'})}catch(e){$('#qr').parentNode.style.display='none'}
 render();
-if(S.step==='splash')setTimeout(()=>{if(S.step==='splash'){S.step='welcome';render()}},1700);
 </script>
 
 </body></html>
