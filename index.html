@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- Copyright (c) 2026 Alessendro Balti. All rights reserved. Kinova, its name, logo, design and code may not be copied, hosted or reused without written permission. -->
 <title>Kinova</title></head><body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Jost:wght@300;400&display=swap">
@@ -278,6 +279,9 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
 .lcard{flex:1;background:var(--pale);border-radius:28px 28px 0 0;padding:22px 22px 28px;color:var(--ink)}
 .or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:14px 0}
 .or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.wmk{position:absolute;left:0;right:0;bottom:2px;text-align:center;font-size:9.5px;letter-spacing:.04em;color:#fff;mix-blend-mode:difference;opacity:.62;z-index:90;pointer-events:none;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ribbon{position:absolute;top:0;left:0;right:0;z-index:95;background:var(--terra);color:#fff;text-align:center;font-size:11px;font-weight:700;padding:5px 8px;letter-spacing:.02em;pointer-events:none}
+.legal{font-size:11.5px;line-height:1.5;color:var(--muted);margin:14px 0 0}
 .note{font-size:11.5px;color:var(--muted);text-align:center;padding:4px 20px 14px}
 </style>
 
@@ -287,7 +291,7 @@ h1,h2,h3{margin:0;letter-spacing:-.01em}
     <h2>Swipe less. Hike more.</h2>
     <p>Interactive prototype of Kinova. Scan the code to open it on your phone and try every feature.</p>
     <div id="qr"></div>
-    <small>Photos are AI-generated. Profiles are not real people.</small>
+    <small>Photos are AI-generated. Profiles are not real people.</small><small>© 2026 Alessendro Balti. All rights reserved. Kinova, its name, logo and code may not be copied or reused without written permission.</small>
   </div>
   <div class="phone" id="phone"><div class="app" id="app"></div></div>
 </div>
@@ -510,7 +514,7 @@ function vSheet(){const t=U.sheet;if(!t)return '';
  ${S.plus?`<button class="btn ghost" data-a="plusoff">Cancel Plus</button>`:`<button class="btn terra" data-a="plus">Start free month</button>`}<div class="note" style="padding-top:10px">Demo only. Nothing is charged.</div></div></div>`;
  if(t==='buddy')return `<div class="scrim" data-a="close"></div><div class="sheet"><div class="grab"></div><div class="in" style="text-align:center">${ic('gift').replace('class="i"','class="i" style="width:40px;height:40px;color:var(--terra)"')}<h2 class="h1" style="margin:10px 0 6px">Bring a buddy</h2><p class="muted" style="margin:0 0 16px">Invite a friend to a group hike. You both get a free month of Plus.</p>
  <div class="box" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b id="lk">kinova.app/join/${esc((S.name||'friend').toLowerCase().replace(/[^a-z]/g,''))}</b><button class="btn sm" data-a="copy">${ic('copy')}Copy</button></div><button class="btn" data-a="strshare">Share the hike on Strava</button></div></div>`;
- if(t==='settings')return `<div class="scrim" data-a="close"></div><div class="sheet"><div class="grab"></div><div class="in"><h2 class="h1" style="margin-bottom:14px">Demo controls</h2><button class="btn ghost" data-a="reset" style="margin-bottom:8px">Reset demo and start over</button><button class="btn ghost" data-a="close">Close</button></div></div>`;
+ if(t==='settings')return `<div class="scrim" data-a="close"></div><div class="sheet"><div class="grab"></div><div class="in"><h2 class="h1" style="margin-bottom:14px">Demo controls</h2><p class="legal" style="margin:0 0 14px">© 2026 Alessendro Balti. All rights reserved. Kinova, its name, logo, design and code may not be copied, hosted or reused without written permission.</p><button class="btn ghost" data-a="reset" style="margin-bottom:8px">Reset demo and start over</button><button class="btn ghost" data-a="close">Close</button></div></div>`;
  if(t.startsWith('persona:')){const p=PERSONAS.find(x=>x.id===t.slice(8));return `<div class="scrim" data-a="close"></div><div class="sheet"><div style="height:300px;position:relative">${imgTag(p.id,'hero').replace('<img ','<img style="object-position:50% 30%" ')}</div><div class="in" style="padding-top:14px"><span class="eyebrow">${p.label}</span><h2 class="h1" style="margin:2px 0 8px">${p.n}, ${p.age}</h2><p style="margin:0 0 14px;line-height:1.5">${p.d}</p>
 <div class="box"><div class="eyebrow" style="margin-bottom:8px">Loves</div><div class="chips">${p.acts.map(a=>`<span class="chip s">${a}</span>`).join('')}</div><div class="eyebrow" style="margin:14px 0 8px">Favourite trails</div><div class="chips">${p.spots.map(a=>`<span class="chip s">${a}</span>`).join('')}</div>${p.strava?`<div class="eyebrow" style="margin:14px 0 8px">Strava</div><div class="big3"><div><b>${p.s.h}</b><span>Hikes</span></div><div><b>${p.s.km}</b><span>km</span></div><div><b>${p.s.up}k</b><span>m up</span></div></div>`:`<div class="eyebrow" style="margin:14px 0 4px">Strava</div><div class="muted">Not connected yet</div>`}</div>
 <button class="btn terra" data-a="enter" data-v="${p.id}">Enter as ${p.n}</button></div></div>`}
@@ -640,6 +644,24 @@ addEventListener('resize',fit);fit();
 $('#pl').innerHTML=wordmark(34);
 try{new QRCode($('#qr'),{text:'https://alessbalti.github.io/kinova-demo/',width:150,height:150,colorDark:'#1e2b24',colorLight:'#e8e2d2'})}catch(e){$('#qr').parentNode.style.display='none'}
 render();
+
+/* ---------- ownership: live copyright key ---------- */
+const OWNER='Alessendro Balti',YEAR=2026;
+const SES=Math.random().toString(36).slice(2,8).toUpperCase();
+function h32(t){let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function liveKey(){const slot=Math.floor(Date.now()/30000);const a=h32(OWNER+'|'+slot+'|'+SES).toString(16).toUpperCase().padStart(8,'0');return 'KNV-'+a.slice(0,4)+'-'+a.slice(4)}
+function official(){try{const h=location.hostname;if(h===''||/(^|\.)alessbalti\.github\.io$|^localhost$|^127\.0\.0\.1$|claude|anthropic/i.test(h))return true;if(location.ancestorOrigins&&[...location.ancestorOrigins].some(o=>/claude|anthropic/i.test(o)))return true}catch(e){}return false}
+const OFFICIAL=official();
+function mountMarks(){const ph=document.getElementById('phone');if(!ph)return;
+ if(!document.getElementById('wmk')){const e=document.createElement('div');e.id='wmk';e.className='wmk';ph.appendChild(e)}
+ if(!OFFICIAL&&!document.getElementById('rbn')){const r=document.createElement('div');r.id='rbn';r.className='ribbon';r.textContent='Unofficial copy of Kinova by '+OWNER;ph.appendChild(r)}
+ tickMark()}
+function tickMark(){const e=document.getElementById('wmk');if(!e){mountMarks();return}
+ const d=new Date();e.textContent=(OFFICIAL?'':'UNOFFICIAL COPY · ')+'© '+YEAR+' '+OWNER+' · '+liveKey()+' · '+d.toISOString().slice(11,19);
+ const cs=getComputedStyle(e);if(cs.display==='none'||cs.visibility==='hidden'||parseFloat(cs.opacity)<.3||e.hasAttribute('style')){e.removeAttribute('style');e.className='wmk'}}
+setInterval(tickMark,1000);
+try{new MutationObserver(()=>{if(!document.getElementById('wmk')||(!OFFICIAL&&!document.getElementById('rbn')))mountMarks()}).observe(document.getElementById('phone'),{childList:true})}catch(e){}
+mountMarks();
 </script>
 
 </body></html>
